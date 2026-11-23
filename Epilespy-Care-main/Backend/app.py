@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
-from db import get_connection, get_connection
+
+from db import get_connection
 
 app = Flask(__name__)
 CORS(app)
@@ -11,8 +12,9 @@ def health():
         conn = get_connection()
         conn.close()
         return jsonify({"status": "ok", "database": "connected"})
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+    except Exception:
+        app.logger.exception("Database health check failed")
+        return jsonify({"status": "error", "message": "Database connection failed"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True) 

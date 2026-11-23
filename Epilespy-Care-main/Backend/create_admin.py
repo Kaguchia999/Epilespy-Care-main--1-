@@ -1,24 +1,32 @@
-# create_admin.py - creates the first administrator account
 import bcrypt
-from db import get_connection, get_db_connection
-# ask for the details of the new administrator
-full_name = input("Full name: ")
-email = input("Email: ")
-password = input("Password: ")
-# scramble the password, so we never store the real one
-hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-# connect to the database
-conn = get_connection()
-cursor = conn.cursor()
-# save the new administrator in the Administrator table
-sql = "INSERT INTO Administrator (full_name, email, password_hash) VALUES (%s, %s, %s)"
-cursor.execute(sql, (full_name, email, hashed))
+from getpass import getpass
 
-# make the change permanent
-conn.commit()
+from db import get_connection
 
-# close the connection
-cursor.close()
-conn.close()
 
-print("Administrator created.")
+def main() -> None:
+    full_name = input("Full name: ").strip()
+    email = input("Email: ").strip()
+    password = getpass("Password: ")
+    hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        try:
+            sql = (
+                "INSERT INTO Administrator (full_name, email, password_hash) "
+                "VALUES (%s, %s, %s)"
+            )
+            cursor.execute(sql, (full_name, email, hashed))
+            conn.commit()
+        finally:
+            cursor.close()
+    finally:
+        conn.close()
+
+    print("Administrator created.")
+
+
+if __name__ == "__main__":
+    main()
