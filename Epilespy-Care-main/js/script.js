@@ -94,29 +94,21 @@ if (doctorLoginForm) {
 // ======================================
 // ADMINISTRATOR LOGIN FORM VALIDATION
 // ======================================
-
-const adminLoginForm = document.getElementById("adminLoginForm");
-
-if (adminLoginForm) {
-
-    adminLoginForm.addEventListener("submit", function(event) {
-
-        event.preventDefault();
-
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
-
-        if (email === "" || password === "") {
-            alert("Please fill in all the required fields.");
-            return;
-        }
-
-        if (!adminLoginForm.checkValidity()) {
-            adminLoginForm.reportValidity();
-            return;
-        }
-
-        window.location.href = "admin.html";
+async function loginAdmin(email, password) {
+    // send the email and password to the backend
+    const response = await fetch("http://127.0.0.1:5000/api/login/admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email, password: password })
     });
 
+    // read the answer the backend sent back
+    const result = await response.json();
+
+    if (response.ok) {
+        alert("Welcome " + result.full_name);
+        window.location.href = "admin.html";
+    } else {
+        alert(result.message);
+    }
 }
