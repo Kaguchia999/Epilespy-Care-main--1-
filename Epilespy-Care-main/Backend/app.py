@@ -228,4 +228,54 @@ def add_health_record():
 
     return jsonify({"message": "Health record saved successfully!"}), 201
 if __name__ == "__main__":
+
+    # fetch all doctor applications (pending listed first)
+ @app.route("/api/admin/doctors", methods=["GET"])
+ def get_doctor_applications():
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute(
+        """SELECT doctor_id,
+                  full_name,
+                  EMAIL AS email,
+                  registration_no,
+                  facility,
+                  approval_status
+           FROM doctor
+           ORDER BY FIELD(approval_status, 'pending', 'approved', 'rejected'), doctor_id DESC"""
+    )
+    doctors = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return jsonify(doctors)
+
+
+# approve or reject a doctor application
+@app.route("/api/admin/doctors/<int:doctor_id>", methods=["PUT"])
+def update_doctor_status(doctor_id):
+    data = request.get_json()
+    new_status = data.get("approval_status", "").strip().lower()
+
+    if new_status not in ("approved", "rejected"):
+        return jsonify({"message": "Invalid status. Use approved or rejected."}), 400
+
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE doctor SET approval_status = %s WHERE doctor_id = %s",
+        (new_status, doctor_id),
+    )
+    conn.commit()
+    updated_rows = cursor.rowcount
+    cursor.close()
+    conn.close()
+
+    if updated_rows == 0:
+        return jsonify({"message": "Doctor account not found"}), 404
+
+    return jsonify({"message": f"Doctor application {new_status} successfully!"})
     app.run(debug=True)
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)
+    
