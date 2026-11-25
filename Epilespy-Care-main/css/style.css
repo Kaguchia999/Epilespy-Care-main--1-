@@ -1,122 +1,82 @@
-
-/* =====================================================
-   1. GENERAL PAGE STYLING
-   Applies to the entire Epilepsy Care System
-===================================================== */
-
+/* GENERAL PAGE STYLING(Applies to the entire Epilepsy Care System) */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-
 body {
     font-family: Arial, Helvetica, sans-serif;
-    background-color: #f4f7fc;
+    background-color: #f7f4fb;
     color: #333;
     line-height: 1.6;
 }
-
-
-/* =====================================================
-   2. HOMEPAGE STYLING
-===================================================== */
-
-/* HEADER */
-
+/* HOMEPAGE STYLING */
 .home-page header {
-    background-color: #2457a6;
+    background-color: #5b2c83;
     color: white;
     padding: 20px 7%;
 }
-
 .home-page header h1 {
     margin-bottom: 5px;
 }
-
 .home-page header p {
     font-size: 14px;
 }
-
-
-/* NAVIGATION */
-
 .home-page nav {
     margin-top: 18px;
 }
-
 .home-page nav a {
     color: white;
     text-decoration: none;
     margin-right: 22px;
     font-weight: bold;
 }
-
 .home-page nav a:hover {
     text-decoration: underline;
 }
-
-
-/* WELCOME SECTION */
-
 .home-page .welcome {
     background-color: white;
     text-align: center;
     padding: 65px 20px;
 }
-
 .home-page .welcome h2 {
-    color: #2457a6;
+    color: #5b2c83;
     font-size: 32px;
     margin-bottom: 15px;
 }
-
 .home-page .welcome p {
     max-width: 750px;
     margin: 0 auto 25px;
     color: #555;
 }
-
 .home-page .welcome-button {
     display: inline-block;
-    background-color: #2457a6;
+    background-color: #5b2c83;
     color: white;
     padding: 12px 25px;
     border-radius: 6px;
     text-decoration: none;
     font-weight: bold;
 }
-
 .home-page .welcome-button:hover {
-    background-color: #173e7a;
+    background-color: #421e61;
 }
-
-
-/* MAIN CONTENT CONTAINER */
-
 .home-page .container {
     width: 86%;
     max-width: 1100px;
     margin: 40px auto;
 }
-
 .home-page .section-heading {
     text-align: center;
     margin-bottom: 30px;
 }
-
 .home-page .section-heading h2 {
-    color: #2457a6;
+    color: #5b2c83;
     margin-bottom: 10px;
 }
-
 .home-page .section-heading p {
     color: #666;
 }
-
-
-/* ABOUT SECTION */
-
 .home-page .about {
     background-color: white;
     padding: 25px;
@@ -124,26 +84,19 @@ body {
     margin-bottom: 40px;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
 }
-
 .home-page .about h2 {
-    color: #2457a6;
+    color: #5b2c83;
     margin-bottom: 12px;
 }
-
 .home-page .about p {
     color: #555;
     margin-bottom: 10px;
 }
-
-
-/* USER ROLE CARDS */
-
 .home-page .role-cards {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 22px;
 }
-
 .home-page .role-card {
     background-color: white;
     padding: 25px;
@@ -152,13 +105,12 @@ body {
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
     transition: transform 0.3s;
 }
-
 .home-page .role-card:hover {
     transform: translateY(-5px);
 }
 
 .home-page .role-card h3 {
-    color: #2457a6;
+    color: #5b2c83;
     margin-bottom: 12px;
 }
 
@@ -169,7 +121,7 @@ body {
 
 .home-page .role-card a {
     display: inline-block;
-    background-color: #2457a6;
+    background-color: #5b2c83;
     color: white;
     padding: 10px 20px;
     text-decoration: none;
@@ -177,11 +129,8 @@ body {
 }
 
 .home-page .role-card a:hover {
-    background-color: #173e7a;
+    background-color: #421e61;
 }
-
-
-/* SYSTEM INFORMATION */
 
 .home-page .information {
     background-color: white;
@@ -192,7 +141,7 @@ body {
 }
 
 .home-page .information h2 {
-    color: #2457a6;
+    color: #5b2c83;
     margin-bottom: 12px;
 }
 
@@ -200,26 +149,18 @@ body {
     color: #555;
 }
 
-
-/* HOMEPAGE FOOTER */
-
 .home-page footer {
-    background-color: #2457a6;
+    background-color: #5b2c83;
     color: white;
     text-align: center;
     padding: 18px;
     margin-top: 45px;
 }
 
-
-/* =====================================================
-   3. PATIENT DASHBOARD STYLING
-===================================================== */
-
-/* HEADER */
+/*PATIENT DASHBOARD STYLING*/
 
 .patient-page header {
-    background-color: #173b65;
+    background-color: #421e61;
     color: white;
     padding: 18px 5%;
     display: flex;
@@ -239,11 +180,8 @@ body {
 }
 
 .patient-page header nav a:hover {
-    color: #a9d5ff;
+    color: #dfc7f5;
 }
-
-
-/* MAIN CONTAINER */
 
 .patient-page .container {
     width: 90%;
@@ -251,18 +189,15 @@ body {
     margin: 30px auto;
 }
 
-
-/* WELCOME SECTION */
-
 .patient-page .welcome {
-    background-color: #e3efff;
+    background-color: #efe6f7;
     padding: 30px;
     border-radius: 8px;
     margin-bottom: 30px;
 }
 
 .patient-page .welcome h1 {
-    color: #173b65;
+    color: #421e61;
     margin-bottom: 10px;
 }
 
@@ -270,16 +205,10 @@ body {
     font-size: 15px;
 }
 
-
-/* SECTION HEADINGS */
-
 .patient-page .section-heading {
-    color: #173b65;
+    color: #421e61;
     margin-bottom: 20px;
 }
-
-
-/* MEDICATION SCHEDULE */
 
 .patient-page .schedule-section {
     background-color: white;
@@ -298,11 +227,11 @@ body {
 }
 
 .patient-page .schedule-header h2 {
-    color: #173b65;
+    color: #421e61;
 }
 
 .patient-page .add-button {
-    background-color: #1769aa;
+    background-color: #6d389e;
     color: white;
     padding: 10px 15px;
     text-decoration: none;
@@ -311,7 +240,7 @@ body {
 }
 
 .patient-page .add-button:hover {
-    background-color: #104b7c;
+    background-color: #421e61;
 }
 
 .patient-page table {
@@ -327,8 +256,8 @@ body {
 }
 
 .patient-page th {
-    background-color: #eef4fc;
-    color: #173b65;
+    background-color: #f3ecfa;
+    color: #421e61;
 }
 
 .patient-page .empty-message {
@@ -336,9 +265,6 @@ body {
     color: #777;
     padding: 25px;
 }
-
-
-/* PATIENT SERVICES */
 
 .patient-page .features {
     margin-bottom: 30px;
@@ -355,11 +281,11 @@ body {
     padding: 25px;
     border-radius: 8px;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-    border-top: 4px solid #1769aa;
+    border-top: 4px solid #6d389e;
 }
 
 .patient-page .feature-card h3 {
-    color: #173b65;
+    color: #421e61;
     margin-bottom: 10px;
 }
 
@@ -370,7 +296,7 @@ body {
 
 .patient-page .feature-link {
     display: inline-block;
-    background-color: #1769aa;
+    background-color: #6d389e;
     color: white;
     padding: 9px 14px;
     border-radius: 5px;
@@ -379,29 +305,20 @@ body {
 }
 
 .patient-page .feature-link:hover {
-    background-color: #104b7c;
+    background-color: #421e61;
 }
 
-
-/* PATIENT FOOTER */
-
 .patient-page footer {
-    background-color: #173b65;
+    background-color: #421e61;
     color: white;
     text-align: center;
     padding: 20px;
     margin-top: 40px;
 }
 
-
-/* =====================================================
-   4. RESPONSIVE DESIGN
-===================================================== */
-
-/* HOMEPAGE RESPONSIVE DESIGN */
+/* RESPONSIVE DESIGN */
 
 @media (max-width: 700px) {
-
     .home-page .container {
         width: 92%;
     }
@@ -420,19 +337,13 @@ body {
     }
 }
 
-
-/* PATIENT RESPONSIVE DESIGN */
-
 @media (max-width: 800px) {
-
     .patient-page .feature-container {
         grid-template-columns: repeat(2, 1fr);
     }
-
 }
 
 @media (max-width: 550px) {
-
     .patient-page header {
         flex-direction: column;
         gap: 12px;
@@ -462,14 +373,10 @@ body {
     }
 }
 
-/* =====================================================
-   5. DOCTOR DASHBOARD STYLING
-===================================================== */
-
-/* HEADER */
+/* DOCTOR DASHBOARD STYLING*/
 
 .doctor-page header {
-    background-color: #173b65;
+    background-color: #421e61;
     color: white;
     padding: 18px 5%;
     display: flex;
@@ -491,11 +398,8 @@ body {
 }
 
 .doctor-page header nav a:hover {
-    color: #a9d5ff;
+    color: #dfc7f5;
 }
-
-
-/* MAIN CONTAINER */
 
 .doctor-page .container {
     width: 90%;
@@ -503,27 +407,21 @@ body {
     margin: 30px auto;
 }
 
-
-/* WELCOME SECTION */
-
 .doctor-page .welcome {
-    background-color: #e3efff;
+    background-color: #efe6f7;
     padding: 30px;
     border-radius: 8px;
     margin-bottom: 30px;
 }
 
 .doctor-page .welcome h2 {
-    color: #173b65;
+    color: #421e61;
     margin-bottom: 10px;
 }
 
 .doctor-page .welcome p {
     font-size: 15px;
 }
-
-
-/* SUMMARY CARDS */
 
 .doctor-page .summary-cards {
     display: grid;
@@ -538,23 +436,20 @@ body {
     border-radius: 8px;
     text-align: center;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-    border-top: 4px solid #1769aa;
+    border-top: 4px solid #6d389e;
 }
 
 .doctor-page .summary-card h3 {
-    color: #173b65;
+    color: #421e61;
     margin-bottom: 12px;
     font-size: 17px;
 }
 
 .doctor-page .summary-card p {
-    color: #1769aa;
+    color: #6d389e;
     font-size: 28px;
     font-weight: bold;
 }
-
-
-/* DOCTOR SECTIONS */
 
 .doctor-page .section {
     background-color: white;
@@ -565,16 +460,13 @@ body {
 }
 
 .doctor-page .section h2 {
-    color: #173b65;
+    color: #421e61;
     margin-bottom: 12px;
 }
 
 .doctor-page .section p {
     margin-bottom: 20px;
 }
-
-
-/* PATIENT SUMMARIES TABLE */
 
 .doctor-page table {
     width: 100%;
@@ -589,8 +481,8 @@ body {
 }
 
 .doctor-page th {
-    background-color: #eef4fc;
-    color: #173b65;
+    background-color: #f3ecfa;
+    color: #421e61;
 }
 
 .doctor-page td[colspan] {
@@ -599,16 +491,13 @@ body {
     padding: 25px;
 }
 
-
-/* CONSULTATION NOTE FORM */
-
 .doctor-page .form-group {
     margin-bottom: 20px;
 }
 
 .doctor-page .form-group label {
     display: block;
-    color: #173b65;
+    color: #421e61;
     font-weight: bold;
     margin-bottom: 7px;
 }
@@ -629,7 +518,7 @@ body {
 }
 
 .doctor-page .btn {
-    background-color: #1769aa;
+    background-color: #6d389e;
     color: white;
     padding: 12px 20px;
     border: none;
@@ -639,33 +528,24 @@ body {
 }
 
 .doctor-page .btn:hover {
-    background-color: #104b7c;
+    background-color: #421e61;
 }
 
-
-/* DOCTOR FOOTER */
-
 .doctor-page footer {
-    background-color: #173b65;
+    background-color: #421e61;
     color: white;
     text-align: center;
     padding: 20px;
     margin-top: 40px;
 }
 
-
-/* DOCTOR RESPONSIVE DESIGN */
-
 @media (max-width: 800px) {
-
     .doctor-page .summary-cards {
         grid-template-columns: repeat(2, 1fr);
     }
-
 }
 
 @media (max-width: 550px) {
-
     .doctor-page header {
         flex-direction: column;
         text-align: center;
@@ -693,22 +573,17 @@ body {
         padding: 8px;
         font-size: 12px;
     }
-
 }
 
-/* =========================================
-   CAREGIVER DASHBOARD STYLING
-========================================= */
+/*CAREGIVER DASHBOARD STYLING*/
 
 .caregiver-page {
-    background-color: #f4f7fc;
+    background-color: #f7f4fb;
     color: #333;
 }
 
-/* HEADER */
-
 .caregiver-page header {
-    background-color: #173b65;
+    background-color: #421e61;
     color: white;
     padding: 20px 30px;
     text-align: center;
@@ -732,18 +607,14 @@ body {
 }
 
 .caregiver-page nav a:hover {
-    color: #b9dcff;
+    color: #dfc7f5;
 }
-
-/* MAIN CONTAINER */
 
 .caregiver-page .container {
     width: 90%;
     max-width: 1200px;
     margin: 30px auto;
 }
-
-/* WELCOME SECTION */
 
 .caregiver-page .welcome {
     background-color: white;
@@ -754,11 +625,9 @@ body {
 }
 
 .caregiver-page .welcome h2 {
-    color: #173b65;
+    color: #421e61;
     margin-bottom: 10px;
 }
-
-/* SUMMARY CARDS */
 
 .caregiver-page .summary-cards {
     display: grid;
@@ -772,29 +641,25 @@ body {
     padding: 25px;
     text-align: center;
     border-radius: 10px;
-    border-left: 5px solid #1769aa;
+    border-left: 5px solid #6d389e;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .caregiver-page .summary-card h3 {
-    color: #173b65;
+    color: #421e61;
     margin-bottom: 10px;
 }
 
 .caregiver-page .summary-card p {
-    color: #1769aa;
+    color: #6d389e;
     font-size: 28px;
     font-weight: bold;
 }
 
-/* SECTION TITLE */
-
 .caregiver-page .section-title {
-    color: #173b65;
+    color: #421e61;
     margin-bottom: 15px;
 }
-
-/* SERVICE CARDS */
 
 .caregiver-page .service-cards {
     display: grid;
@@ -811,7 +676,7 @@ body {
 }
 
 .caregiver-page .service-card h3 {
-    color: #173b65;
+    color: #421e61;
     margin-bottom: 10px;
 }
 
@@ -819,11 +684,9 @@ body {
     margin-bottom: 18px;
 }
 
-/* BUTTONS */
-
 .caregiver-page .btn {
     display: inline-block;
-    background-color: #1769aa;
+    background-color: #6d389e;
     color: white;
     text-decoration: none;
     padding: 10px 18px;
@@ -832,10 +695,8 @@ body {
 }
 
 .caregiver-page .btn:hover {
-    background-color: #173b65;
+    background-color: #421e61;
 }
-
-/* HELP REQUESTS TABLE */
 
 .caregiver-page .requests-section {
     background-color: white;
@@ -847,7 +708,7 @@ body {
 }
 
 .caregiver-page .requests-section h2 {
-    color: #173b65;
+    color: #421e61;
     margin-bottom: 15px;
 }
 
@@ -864,39 +725,33 @@ body {
 }
 
 .caregiver-page th {
-    background-color: #e3efff;
-    color: #173b65;
+    background-color: #efe6f7;
+    color: #421e61;
 }
 
 .caregiver-page td[colspan="4"] {
     text-align: center;
 }
 
-/* INFORMATION SECTION */
-
 .caregiver-page .information {
-    background-color: #e3efff;
+    background-color: #efe6f7;
     padding: 25px;
     border-radius: 10px;
     margin-bottom: 30px;
 }
 
 .caregiver-page .information h2 {
-    color: #173b65;
+    color: #421e61;
     margin-bottom: 10px;
 }
 
-/* FOOTER */
-
 .caregiver-page footer {
-    background-color: #173b65;
+    background-color: #421e61;
     color: white;
     text-align: center;
     padding: 18px;
     margin-top: 30px;
 }
-
-/* RESPONSIVE DESIGN */
 
 @media (max-width: 800px) {
     .caregiver-page .summary-cards {
@@ -923,19 +778,15 @@ body {
     }
 }
 
-/* =========================================
-   ADMINISTRATOR DASHBOARD STYLING
-========================================= */
+/* ADMINISTRATOR DASHBOARD STYLING*/
 
 .admin-page {
-    background-color: #f4f7fc;
+    background-color: #f7f4fb;
     color: #333;
 }
 
-/* HEADER */
-
 .admin-page header {
-    background-color: #173b65;
+    background-color: #421e61;
     color: white;
     padding: 20px 7%;
 }
@@ -945,7 +796,7 @@ body {
 }
 
 .admin-page header p {
-    color: #e3efff;
+    color: #efe6f7;
 }
 
 .admin-page nav {
@@ -962,11 +813,9 @@ body {
 }
 
 .admin-page nav a:hover {
-    color: #b9dcff;
+    color: #dfc7f5;
     text-decoration: underline;
 }
-
-/* MAIN CONTAINER */
 
 .admin-page .container {
     width: 86%;
@@ -974,14 +823,12 @@ body {
     margin: 35px auto;
 }
 
-/* WELCOME SECTION */
-
 .admin-page .welcome {
     margin-bottom: 25px;
 }
 
 .admin-page .welcome h2 {
-    color: #173b65;
+    color: #421e61;
     margin-bottom: 10px;
 }
 
@@ -989,8 +836,6 @@ body {
     color: #666;
     line-height: 1.6;
 }
-
-/* SUMMARY CARDS */
 
 .admin-page .summary-cards {
     display: grid;
@@ -1003,30 +848,26 @@ body {
     background-color: white;
     padding: 22px;
     border-radius: 10px;
-    border-left: 5px solid #1769aa;
+    border-left: 5px solid #6d389e;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
 }
 
 .admin-page .summary-card h3 {
-    color: #173b65;
+    color: #421e61;
     font-size: 16px;
     margin-bottom: 12px;
 }
 
 .admin-page .summary-card p {
-    color: #1769aa;
+    color: #6d389e;
     font-size: 26px;
     font-weight: bold;
 }
 
-/* SECTION TITLE */
-
 .admin-page .section-title {
-    color: #173b65;
+    color: #421e61;
     margin-bottom: 18px;
 }
-
-/* ADMINISTRATOR SERVICES */
 
 .admin-page .services {
     display: grid;
@@ -1051,7 +892,7 @@ body {
 }
 
 .admin-page .service-card h3 {
-    color: #173b65;
+    color: #421e61;
     margin-bottom: 12px;
 }
 
@@ -1059,8 +900,6 @@ body {
     color: #666;
     line-height: 1.6;
 }
-
-/* INFORMATION SECTION */
 
 .admin-page .information {
     background-color: white;
@@ -1072,7 +911,7 @@ body {
 }
 
 .admin-page .information h3 {
-    color: #173b65;
+    color: #421e61;
     margin-bottom: 12px;
 }
 
@@ -1080,17 +919,13 @@ body {
     margin-bottom: 10px;
 }
 
-/* FOOTER */
-
 .admin-page footer {
-    background-color: #173b65;
+    background-color: #421e61;
     color: white;
     text-align: center;
     padding: 18px;
     margin-top: 40px;
 }
-
-/* RESPONSIVE DESIGN */
 
 @media (max-width: 650px) {
     .admin-page .container {
