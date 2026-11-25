@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | Epilepsy Care System</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="login-page">
+
+    <header>
+        <h1>Epilepsy Care System</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="patient/login.html">Patient Login</a>
+            <a href="doctor/login.html">Doctor Login</a>
+            <a href="caregiver/login.html">Caregiver Login</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="login-card">
+            <h2>Create an Account</h2>
+            <p>Register as a patient, caregiver, or doctor to access the Epilepsy Care System.</p>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="role">Account Type</label>
+                    <select id="role" required>
+                        <option value="patient">Patient</option>
+                        <option value="caregiver">Caregiver</option>
+                        <option value="doctor">Doctor</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" placeholder="e.g. Mary Njeri" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="Enter your email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Choose a password" minlength="6" required>
+                </div>
+
+                <!-- Shown for Patient and Caregiver -->
+                <div class="form-group" id="phoneGroup">
+                    <label for="phone">Phone Number</label>
+                    <input type="text" id="phone" placeholder="e.g. 0712345678">
+                </div>
+
+                <!-- Shown only when Doctor is selected -->
+                <div id="doctorFields" style="display: none;">
+                    <div class="form-group">
+                        <label for="registrationNo">Medical Registration Number</label>
+                        <input type="text" id="registrationNo" placeholder="e.g. KMPDC-3099">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="facility">Hospital / Facility</label>
+                        <input type="text" id="facility" placeholder="e.g. Kenyatta National Hospital">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn">Create Account</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Epilepsy Care System. All Rights Reserved.</p>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
