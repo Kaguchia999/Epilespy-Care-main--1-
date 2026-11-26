@@ -3,279 +3,429 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shared Patient Summaries | Epilepsy Care</title>
-
+    <title>Shared Patient Summaries | Epilepsy Care System</title>
+    <link rel="stylesheet" href="../css/style.css">
     <style>
-        /* GENERAL STYLING */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: #f4f7fc;
-            color: #333;
-        }
-
-        /* HEADER */
-        header {
-            background-color: #2457a6;
-            color: white;
-            padding: 20px 7%;
+        .summary-toolbar {
             display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: flex-end;
+            justify-content: space-between;
+        }
+        .summary-toolbar .form-group {
+            flex: 1;
+            min-width: 240px;
+            margin-bottom: 0;
+        }
+        .toolbar-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .patient-banner {
+            display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
+            gap: 12px;
         }
-
-        header h1 {
-            font-size: 24px;
+        .patient-meta {
+            color: #6b627d;
+            font-size: 14px;
+            margin-top: 4px;
         }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin-left: 20px;
+        .report-date {
+            font-size: 13px;
+            color: #6b627d;
         }
-
-        nav a:hover {
-            text-decoration: underline;
-        }
-
-        /* MAIN CONTAINER */
-        .container {
-            width: 86%;
-            max-width: 1200px;
-            margin: 35px auto;
-        }
-
-        /* PAGE INTRODUCTION */
-        .welcome {
-            background-color: white;
-            padding: 25px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-
-        .welcome h2 {
-            color: #2457a6;
-            margin-bottom: 12px;
-        }
-
-        .welcome p {
-            color: #666;
-            line-height: 1.7;
-        }
-
-        /* SEARCH SECTION */
-        .search-section {
-            background-color: white;
-            padding: 25px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-
-        .search-section h3 {
-            color: #2457a6;
-            margin-bottom: 15px;
-        }
-
-        .search-section input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 15px;
-        }
-
-        /* SUMMARY TABLE */
-        .table-section {
-            background-color: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            overflow-x: auto;
-        }
-
-        .table-section h3 {
-            color: #2457a6;
-            margin-bottom: 15px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 650px;
-        }
-
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #eaf1fc;
-            color: #2457a6;
-        }
-
-        .status {
-            color: #666;
-            font-weight: bold;
-        }
-
-        /* INFORMATION CARD */
-        .information {
-            background-color: white;
-            padding: 25px;
-            border-radius: 10px;
-            margin-top: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-
-        .information h3 {
-            color: #2457a6;
-            margin-bottom: 12px;
-        }
-
-        .information p {
-            color: #666;
-            line-height: 1.7;
-        }
-
-        /* FOOTER */
-        footer {
-            background-color: #2457a6;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            margin-top: 40px;
-        }
-
-        /* RESPONSIVE DESIGN */
-        @media (max-width: 650px) {
-            header {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            nav a {
-                display: inline-block;
-                margin: 8px;
-            }
-
-            .container {
-                width: 92%;
-            }
-
-            .welcome,
-            .search-section,
-            .table-section,
-            .information {
-                padding: 18px;
-            }
+        @media print {
+            header, footer, .no-print { display: none !important; }
+            .sub-page .container { width: 100%; margin: 0; max-width: 100%; }
+            .sub-page .card { box-shadow: none; break-inside: avoid; border: 1px solid #d8c8ee; }
         }
     </style>
 </head>
 
-<body>
+<body class="sub-page">
 
-    <!-- HEADER -->
     <header>
-        <h1>Epilepsy Care System</h1>
-
+        <h2>Epilepsy Care Doctor</h2>
         <nav>
             <a href="../index.html">Home</a>
             <a href="doctor.html">Dashboard</a>
-            <a href="login.html">Login</a>
+            <a href="shared-summaries.html">Shared Summaries</a>
+            <a href="consultation-summaries.html">Consultation Notes</a>
+            <a href="login.html" id="logoutBtn">Logout</a>
         </nav>
     </header>
 
-    <!-- MAIN CONTENT -->
     <main class="container">
 
-        <!-- INTRODUCTION -->
-        <section class="welcome">
-
-            <h2>Shared Patient Summaries</h2>
-
-            <p>
-                This page provides doctors with access to health
-                summaries that patients have chosen to share.
-                The summaries may contain medication information,
-                seizure history, health records and other relevant
-                patient information.
-            </p>
-
+        <section class="page-heading">
+            <h1>Shared Patient Health Summary</h1>
+            <p>Pre-consultation clinical overview generated directly from the patient's live MySQL records.</p>
         </section>
 
-        <!-- SEARCH SECTION -->
-        <section class="search-section">
+        <!-- Patient Picker & Actions -->
+        <section class="card no-print">
+            <div class="summary-toolbar">
+                <div class="form-group">
+                    <label for="patientSelector">Select Patient</label>
+                    <select id="patientSelector">
+                        <option value="">Loading patients...</option>
+                    </select>
+                </div>
 
-            <h3>Search Patient Summaries</h3>
-
-            <input
-                type="search"
-                placeholder="Search using patient name or patient ID"
-                aria-label="Search patient summaries"
-            >
-
+                <div class="toolbar-actions">
+                    <button type="button" class="btn" onclick="window.print()">Print / Save PDF</button>
+                    <a href="consultation-summaries.html" id="writeNoteLink" class="btn" style="text-decoration:none;">Write Consultation Note</a>
+                </div>
+            </div>
         </section>
 
-        <!-- SUMMARY TABLE -->
-        <section class="table-section">
+        <!-- Live Clinical Summary Content -->
+        <div id="summaryContent" style="display: none;">
+            <section class="card">
+                <div class="patient-banner">
+                    <div>
+                        <h2 id="summaryPatientName" style="margin-bottom: 4px;">Patient Name</h2>
+                        <p id="summaryPatientContact" class="patient-meta"></p>
+                    </div>
+                    <div class="report-date" id="reportTimestamp"></div>
+                </div>
+            </section>
 
-            <h3>Available Patient Summaries</h3>
+            <section class="summary-cards">
+                <div class="summary-card">
+                    <h3>Active Medications</h3>
+                    <p id="kpiActiveMeds">0</p>
+                </div>
 
-            <table>
+                <div class="summary-card">
+                    <h3>Seizures Logged</h3>
+                    <p id="kpiSeizures">0</p>
+                </div>
 
-                <thead>
-                    <tr>
-                        <th>Patient ID</th>
-                        <th>Patient Name</th>
-                        <th>Date Shared</th>
-                        <th>Summary Type</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
+                <div class="summary-card">
+                    <h3>Dose Adherence</h3>
+                    <p id="kpiAdherence">No logs</p>
+                </div>
 
-                <tbody>
-                    <tr>
-                        <td colspan="5">
-                            No patient summaries have been shared yet.
-                        </td>
-                    </tr>
-                </tbody>
+                <div class="summary-card">
+                    <h3>Side Effects</h3>
+                    <p id="kpiSideEffects">0</p>
+                </div>
+            </section>
 
-            </table>
+            <section class="card">
+                <h2>Current Medications &amp; Schedule</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Medication</th>
+                                <th>Dosage</th>
+                                <th>Frequency</th>
+                                <th>Reminder Time</th>
+                                <th>Instructions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summaryMedsBody"></tbody>
+                    </table>
+                </div>
+            </section>
 
-        </section>
+            <section class="card">
+                <h2>Seizure History</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Seizure Type</th>
+                                <th>Duration</th>
+                                <th>Symptoms &amp; Observations</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summarySeizuresBody"></tbody>
+                    </table>
+                </div>
+            </section>
 
-        <!-- INFORMATION SECTION -->
-        <section class="information">
+            <section class="card">
+                <h2>Non-Seizure Symptoms &amp; Observations</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Symptom</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summarySymptomsBody"></tbody>
+                    </table>
+                </div>
+            </section>
 
-            <h3>Patient Privacy Information</h3>
+            <section class="card">
+                <h2>Reported Medication Side Effects</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Medication</th>
+                                <th>Side Effect</th>
+                                <th>Severity</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summarySideEffectsBody"></tbody>
+                    </table>
+                </div>
+            </section>
 
-            <p>
-                Doctors should only access patient summaries
-                that have been shared with them by the patients.
-                Patient health information should be handled
-                confidentially and responsibly.
-            </p>
+            <section class="card">
+                <h2>Recent Dose Adherence Logs</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Medication</th>
+                                <th>Scheduled Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summaryDoseLogsBody"></tbody>
+                    </table>
+                </div>
+            </section>
 
+            <section class="card">
+                <h2>Previous Consultation Summaries</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Assessment</th>
+                                <th>Treatment Plan</th>
+                                <th>Follow-Up</th>
+                                <th>Doctor</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summaryConsultationsBody"></tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <section class="card" id="summaryPlaceholder">
+            <p class="empty-message" id="placeholderText">Select a patient above to load their clinical summary.</p>
         </section>
 
     </main>
 
-    <!-- FOOTER -->
     <footer>
         <p>&copy; 2026 Epilepsy Care System. All Rights Reserved.</p>
     </footer>
 
+    <script>
+        const API_BASE = "http://127.0.0.1:5000";
+
+        const patientSelector = document.getElementById("patientSelector");
+        const summaryContent = document.getElementById("summaryContent");
+        const summaryPlaceholder = document.getElementById("summaryPlaceholder");
+        const placeholderText = document.getElementById("placeholderText");
+        const writeNoteLink = document.getElementById("writeNoteLink");
+
+        document.getElementById("logoutBtn").addEventListener("click", function() {
+            localStorage.removeItem("doctor_id");
+            localStorage.removeItem("full_name");
+            localStorage.removeItem("role");
+        });
+
+        function esc(value) {
+            return String(value ?? "-")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        async function loadPatientList() {
+            const doctorId = localStorage.getItem("doctor_id");
+            if (!doctorId) {
+                patientSelector.innerHTML = '<option value="">Login required</option>';
+                placeholderText.textContent = "Please log in on the Doctor Login page first to view patient summaries.";
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/doctor/overview`);
+                if (!response.ok) throw new Error(`Server returned ${response.status}`);
+                const data = await response.json();
+
+                if (!data.patients || data.patients.length === 0) {
+                    patientSelector.innerHTML = '<option value="">No registered patients found</option>';
+                    placeholderText.textContent = "No patients have registered yet.";
+                    return;
+                }
+
+                patientSelector.innerHTML =
+                    '<option value="">-- Choose a patient --</option>' +
+                    data.patients.map(p =>
+                        `<option value="${p.patient_id}">${esc(p.full_name)} (${esc(p.email)})</option>`
+                    ).join("");
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const preselectedId = urlParams.get("patient_id") || String(data.patients[0].patient_id);
+                patientSelector.value = preselectedId;
+                loadPatientSummary(preselectedId);
+            } catch (error) {
+                console.error("Load patient list error:", error);
+                placeholderText.textContent = "Could not connect to backend. Make sure python app.py is running.";
+            }
+        }
+
+        async function loadPatientSummary(patientId) {
+            if (!patientId) {
+                summaryContent.style.display = "none";
+                summaryPlaceholder.style.display = "block";
+                placeholderText.textContent = "Select a patient above to load their clinical summary.";
+                return;
+            }
+
+            writeNoteLink.href = `consultation-summaries.html?patient_id=${patientId}`;
+
+            try {
+                const [summaryRes, consultRes] = await Promise.all([
+                    fetch(`${API_BASE}/api/doctor/patient-summary/${patientId}`),
+                    fetch(`${API_BASE}/api/doctor/consultations`)
+                ]);
+
+                if (!summaryRes.ok) throw new Error(`Summary returned ${summaryRes.status}`);
+
+                const data = await summaryRes.json();
+                const allConsultations = consultRes.ok ? await consultRes.json() : [];
+                const patientConsultations = allConsultations.filter(
+                    c => String(c.patient_id) === String(patientId)
+                );
+
+                // Patient Header & KPIs
+                document.getElementById("summaryPatientName").textContent = data.patient.full_name;
+                document.getElementById("summaryPatientContact").textContent =
+                    `Email: ${data.patient.email}  |  Phone: ${data.patient.phone || "Not provided"}  |  Status: ${(data.patient.status || "active").toUpperCase()}`;
+                document.getElementById("reportTimestamp").textContent =
+                    `Generated: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+
+                document.getElementById("kpiActiveMeds").textContent = data.stats.active_medications;
+                document.getElementById("kpiSeizures").textContent = data.stats.total_seizures;
+                document.getElementById("kpiSideEffects").textContent = data.stats.total_side_effects;
+                document.getElementById("kpiAdherence").textContent =
+                    data.stats.adherence_rate !== null ? `${data.stats.adherence_rate}%` : "No logs";
+
+                // 1. Medications
+                document.getElementById("summaryMedsBody").innerHTML = data.medications.length
+                    ? data.medications.map(m => `
+                        <tr>
+                            <td><strong>${esc(m.medication_name)}</strong></td>
+                            <td>${esc(m.strength || "-")}</td>
+                            <td>${esc(m.frequency || "-")}</td>
+                            <td>${esc(m.reminder_time || "-")}</td>
+                            <td>${esc(m.instructions || "-")}</td>
+                        </tr>
+                    `).join("")
+                    : '<tr><td colspan="5" class="empty-message">No active medications recorded.</td></tr>';
+
+                // 2. Seizures
+                document.getElementById("summarySeizuresBody").innerHTML = data.seizures.length
+                    ? data.seizures.map(s => `
+                        <tr>
+                            <td><strong>${esc(s.record_date)}</strong></td>
+                            <td><span class="badge badge-danger">${esc(s.seizure_type || "Unspecified")}</span></td>
+                            <td>${s.duration_secs !== null ? `${esc(s.duration_secs)}s` : "-"}</td>
+                            <td>${esc(s.notes || "-")}</td>
+                        </tr>
+                    `).join("")
+                    : '<tr><td colspan="4" class="empty-message">No seizures logged for this patient.</td></tr>';
+
+                // 3. Symptoms
+                document.getElementById("summarySymptomsBody").innerHTML = data.symptoms.length
+                    ? data.symptoms.map(sym => `
+                        <tr>
+                            <td><strong>${esc(sym.record_date)}</strong></td>
+                            <td>${esc(sym.symptom || "-")}</td>
+                            <td>${esc(sym.notes || "-")}</td>
+                        </tr>
+                    `).join("")
+                    : '<tr><td colspan="3" class="empty-message">No general symptom logs recorded.</td></tr>';
+
+                // 4. Side effects
+                document.getElementById("summarySideEffectsBody").innerHTML = data.side_effects.length
+                    ? data.side_effects.map(ef => {
+                        const sevClass = ef.severity === "Severe"
+                            ? "badge-danger"
+                            : ef.severity === "Moderate" ? "badge-warning" : "badge-success";
+                        return `
+                            <tr>
+                                <td><strong>${esc(ef.record_date)}</strong></td>
+                                <td>${esc(ef.medication_name)}</td>
+                                <td>${esc(ef.effect)}</td>
+                                <td><span class="badge ${sevClass}">${esc(ef.severity)}</span></td>
+                                <td>${esc(ef.notes)}</td>
+                            </tr>
+                        `;
+                    }).join("")
+                    : '<tr><td colspan="5" class="empty-message">No medication side effects reported.</td></tr>';
+
+                // 5. Dose logs
+                document.getElementById("summaryDoseLogsBody").innerHTML = data.dose_logs.length
+                    ? data.dose_logs.map(dl => `
+                        <tr>
+                            <td><strong>${esc(dl.dose_date)}</strong></td>
+                            <td>${esc(dl.medication_name)}</td>
+                            <td>${esc(dl.reminder_time || "-")}</td>
+                            <td>
+                                <span class="badge ${dl.status === "taken" ? "badge-success" : "badge-danger"}">
+                                    ${esc(dl.status).toUpperCase()}
+                                </span>
+                            </td>
+                        </tr>
+                    `).join("")
+                    : '<tr><td colspan="4" class="empty-message">No dose logs recorded yet.</td></tr>';
+
+                // 6. Previous consultation notes for this patient
+                document.getElementById("summaryConsultationsBody").innerHTML = patientConsultations.length
+                    ? patientConsultations.map(c => `
+                        <tr>
+                            <td><strong>${esc(c.consultation_date)}</strong></td>
+                            <td>${esc(c.diagnosis)}</td>
+                            <td>${esc(c.treatment_plan || "-")}</td>
+                            <td>${esc(c.follow_up_date || "-")}</td>
+                            <td>${esc(c.doctor_name)}</td>
+                        </tr>
+                    `).join("")
+                    : '<tr><td colspan="5" class="empty-message">No prior consultation notes recorded for this patient.</td></tr>';
+
+                summaryPlaceholder.style.display = "none";
+                summaryContent.style.display = "block";
+            } catch (error) {
+                console.error("Load patient summary error:", error);
+                summaryContent.style.display = "none";
+                summaryPlaceholder.style.display = "block";
+                placeholderText.textContent = "Could not load summary for this patient.";
+            }
+        }
+
+        patientSelector.addEventListener("change", function() {
+            loadPatientSummary(this.value);
+        });
+
+        loadPatientList();
+    </script>
 </body>
 </html>

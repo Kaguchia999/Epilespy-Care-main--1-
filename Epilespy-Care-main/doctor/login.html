@@ -4,80 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Doctor Login | Epilepsy Care</title>
-
-   <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
+
 <body class="login-page">
 
-    <!-- HEADER -->
-    <header>
-        <h1>Epilepsy Care System</h1>
+    <div class="login-container">
+        <h2>Doctor Login</h2>
 
-        <nav>
-            <a href="../index.html">Home</a>
-            <a href="doctor.html">Dashboard</a>
-        </nav>
-    </header>
+        <form id="doctorLoginForm">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="Enter your email address" required>
 
-    <!-- LOGIN SECTION -->
-    <main class="container">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter your password" required>
 
-        <section class="login-card">
-
-            <h2>Doctor Login</h2>
-
-            <p>
-                Login to access patient health summaries
-                and consultation information.
-            </p>
-
-            <form id="doctorLoginForm">
-
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-
-                    <input
-                        type="email"
-                        id="email"
-                        placeholder="Enter your email address"
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Password</label>
-
-                    <input
-                        type="password"
-                        id="password"
-                        placeholder="Enter your password"
-                        required
-                    >
-                </div>
-
-                <div class="forgot-password">
-                    <a href="#">Forgot Password?</a>
-                </div>
-
-                <button type="submit" class="btn">Login</button>
-
-            </form>
-
-            <div class="register-link">
-                <p>
-                    Don't have an account?
-                    <a href="signup.html">Register here</a>
-                </p>
+            <div class="form-options">
+                <a href="#" class="forgot-link">Forgot password?</a>
             </div>
 
-        </section>
+            <button type="submit">Login</button>
+        </form>
 
-    </main>
+        <div class="login-footer">
+            <p class="register-prompt">
+                Don't have an account? <a href="../register.html">Register</a>
+            </p>
+            <a href="../index.html" class="back-link">Back to Home</a>
+        </div>
+    </div>
 
-    <!-- FOOTER -->
-    <footer>
-        <p>&copy; 2026 Epilepsy Care System. All Rights Reserved.</p>
-    </footer>
-<script src="../js/script.js"></script>
+    <script>
+        const API_BASE = "http://127.0.0.1:5000";
+
+        document.querySelector(".forgot-link").addEventListener("click", function(event) {
+            event.preventDefault();
+            alert("Please contact your Epilepsy Care system administrator to reset your password.");
+        });
+
+        document.getElementById("doctorLoginForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/login/doctor`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem("doctor_id", result.doctor_id);
+                    localStorage.setItem("full_name", result.full_name);
+                    localStorage.setItem("role", "doctor");
+                    window.location.href = "doctor.html";
+                } else {
+                    alert(result.error || result.message || "Login failed.");
+                }
+            } catch (error) {
+                console.error("Doctor login error:", error);
+                alert("Could not connect to the backend. Make sure python app.py is running.");
+            }
+        });
+    </script>
 </body>
 </html>

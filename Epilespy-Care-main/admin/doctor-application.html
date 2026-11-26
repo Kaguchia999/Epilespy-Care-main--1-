@@ -5,6 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Doctor Applications | Epilepsy Care</title>
     <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .btn-sm {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+        .btn-sm:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .btn-approve {
+            background-color: #166534;
+            color: #ffffff;
+        }
+        .btn-reject {
+            background-color: #b91c1c;
+            color: #ffffff;
+        }
+    </style>
 </head>
 
 <body class="sub-page">
@@ -14,6 +43,7 @@
         <nav>
             <a href="../index.html">Home</a>
             <a href="admin.html">Dashboard</a>
+            <a href="manage-accounts.html">Manage Accounts</a>
         </nav>
     </header>
 
@@ -26,23 +56,25 @@
         <section class="card">
             <h2>Registered &amp; Pending Doctors</h2>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Doctor Name</th>
-                        <th>Email</th>
-                        <th>Registration No.</th>
-                        <th>Facility</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="doctorApplicationsBody">
-                    <tr>
-                        <td colspan="6" class="empty-message">Loading doctor applications...</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Doctor Name</th>
+                            <th>Email</th>
+                            <th>Registration No.</th>
+                            <th>Facility</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="doctorApplicationsBody">
+                        <tr>
+                            <td colspan="6" class="empty-message">Loading doctor applications...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
 
         <section class="card">
@@ -57,6 +89,83 @@
         <p>&copy; 2026 Epilepsy Care System. All Rights Reserved.</p>
     </footer>
 
-    <script src="../js/script.js"></script>
+    <script>
+        const API_BASE = "http://127.0.0.1:5000";
+        const doctorApplicationsBody = document.getElementById("doctorApplicationsBody");
+
+        function getStatusBadgeClass(status) {
+            if (status === "approved") return "badge-success";
+            if (status === "rejected") return "badge-danger";
+            return "badge-warning";
+        }
+
+        async function loadDoctorApplications() {
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/doctors`);
+                if (!response.ok) throw new Error(`Server returned ${response.status}`);
+
+                const doctors = await response.json();
+
+                if (doctors.length === 0) {
+                    doctorApplicationsBody.innerHTML =
+                        '<tr><td colspan="6" class="empty-message">No doctor applications found.</td></tr>';
+                    return;
+                }
+
+                doctorApplicationsBody.innerHTML = doctors.map(doc => {
+                    const status = (doc.approval_status || "pending").toLowerCase();
+                    const badgeClass = getStatusBadgeClass(status);
+                    const displayStatus = status.charAt(0).toUpperCase() + status.slice(1);
+
+                    return `
+                        <tr>
+                            <td><strong>${doc.full_name}</strong></td>
+                            <td>${doc.email}</td>
+                            <td>${doc.registration_no || "-"}</td>
+                            <td>${doc.facility || "-"}</td>
+                            <td><span class="badge ${badgeClass}">${displayStatus}</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    ${status !== "approved"
+                                        ? `<button type="button" class="btn-sm btn-approve" onclick="updateDoctorStatus(${doc.doctor_id}, 'approved')">Approve</button>`
+                                        : ""}
+                                    ${status !== "rejected"
+                                        ? `<button type="button" class="btn-sm btn-reject" onclick="updateDoctorStatus(${doc.doctor_id}, 'rejected')">Reject</button>`
+                                        : ""}
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join("");
+            } catch (error) {
+                console.error("Load doctor applications error:", error);
+                doctorApplicationsBody.innerHTML =
+                    '<tr><td colspan="6" class="empty-message">Could not load doctor applications. Make sure python app.py is running.</td></tr>';
+            }
+        }
+
+        async function updateDoctorStatus(doctorId, newStatus) {
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/doctors/${doctorId}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ approval_status: newStatus })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message);
+                    loadDoctorApplications();
+                } else {
+                    alert(result.error || result.message || "Update failed.");
+                }
+            } catch (error) {
+                console.error("Update doctor status error:", error);
+                alert("Could not connect to the backend.");
+            }
+        }
+
+        loadDoctorApplications();
+    </script>
 </body>
 </html>

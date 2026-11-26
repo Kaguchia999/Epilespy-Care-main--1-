@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrator Dashboard | Epilepsy Care System</title>
-<link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 
 <body class="admin-page">
@@ -12,21 +12,21 @@
     <header>
         <h1>Epilepsy Care System</h1>
         <p>Administrator Portal</p>
-<nav>
-    <a href="../index.html">Home</a>
-    <a href="admin.html">Dashboard</a>
-    <a href="doctor-applications.html">Doctor Applications</a>
-    <a href="manage-accounts.html">Manage Accounts</a>
-    <a href="reference-data.html">Reference Data</a>
-    <a href="errors-usage.html">Errors and Usage</a>
-</nav>
-
+        <nav>
+            <a href="../index.html">Home</a>
+            <a href="admin.html">Dashboard</a>
+            <a href="doctor-application.html">Doctor Applications</a>
+            <a href="manage-account.html">Manage Accounts</a>
+            <a href="reference-data.html">Reference Data</a>
+            <a href="errors-uage.html">Errors and Usage</a>
+            <a href="#" id="logoutBtn">Logout</a>
+        </nav>
     </header>
 
     <main class="container">
 
         <section class="welcome">
-            <h2>Administrator Dashboard</h2>
+            <h2 id="welcomeHeading">Administrator Dashboard</h2>
             <p>
                 Welcome to the administration panel.
                 Manage user accounts, review doctor applications,
@@ -38,22 +38,22 @@
 
             <div class="summary-card">
                 <h3>Total Users</h3>
-                <p>120</p>
+                <p id="totalUsersCount">...</p>
             </div>
 
             <div class="summary-card">
-                <h3>Doctor Applications</h3>
-                <p>8</p>
+                <h3>Pending Doctor Applications</h3>
+                <p id="pendingDoctorsCount">...</p>
             </div>
 
             <div class="summary-card">
                 <h3>Active Accounts</h3>
-                <p>105</p>
+                <p id="activeAccountsCount">...</p>
             </div>
 
             <div class="summary-card">
-                <h3>System Reports</h3>
-                <p>15</p>
+                <h3>Registered Patients</h3>
+                <p id="patientsCount">...</p>
             </div>
 
         </section>
@@ -62,7 +62,7 @@
 
         <section class="services">
 
-            <a href="doctor-applications.html" class="service-card">
+            <a href="doctor-application.html" class="service-card">
                 <h3>Doctor Applications</h3>
                 <p>
                     Review doctor registration applications
@@ -70,7 +70,7 @@
                 </p>
             </a>
 
-            <a href="manage-accounts.html" class="service-card">
+            <a href="manage-account.html" class="service-card">
                 <h3>Manage Accounts</h3>
                 <p>
                     View and manage patient, doctor and caregiver
@@ -86,7 +86,7 @@
                 </p>
             </a>
 
-            <a href="errors-usage.html" class="service-card">
+            <a href="errors-uage.html" class="service-card">
                 <h3>Errors and Usage</h3>
                 <p>
                     Monitor system activity, usage information
@@ -121,6 +121,56 @@
     <footer>
         <p>&copy; 2026 Epilepsy Care System. All Rights Reserved.</p>
     </footer>
+
+    <script>
+        const API_BASE = "http://127.0.0.1:5000";
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            // Show the logged-in admin's name if available
+            const adminName = localStorage.getItem("full_name");
+            if (adminName && localStorage.getItem("role") === "admin") {
+                document.getElementById("welcomeHeading").textContent = `Welcome, ${adminName}`;
+            }
+
+            // Logout handler
+            const logoutBtn = document.getElementById("logoutBtn");
+            if (logoutBtn) {
+                logoutBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    localStorage.clear();
+                    window.location.href = "login.html";
+                });
+            }
+
+            // Load live dashboard counts from MySQL via Flask
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/users`);
+                if (!res.ok) throw new Error("Failed to load stats");
+                const data = await res.json();
+
+                const users = data.users || [];
+                const totalUsers = users.length;
+                const pendingDoctors = users.filter(
+                    (u) => u.role === "doctor" && u.status === "pending"
+                ).length;
+                const activeAccounts = users.filter(
+                    (u) => u.status === "active" || u.status === "approved"
+                ).length;
+                const totalPatients = data.counts ? data.counts.patients : 0;
+
+                document.getElementById("totalUsersCount").textContent = totalUsers;
+                document.getElementById("pendingDoctorsCount").textContent = pendingDoctors;
+                document.getElementById("activeAccountsCount").textContent = activeAccounts;
+                document.getElementById("patientsCount").textContent = totalPatients;
+            } catch (err) {
+                console.error("Dashboard stats error:", err);
+                document.getElementById("totalUsersCount").textContent = "-";
+                document.getElementById("pendingDoctorsCount").textContent = "-";
+                document.getElementById("activeAccountsCount").textContent = "-";
+                document.getElementById("patientsCount").textContent = "-";
+            }
+        });
+    </script>
 
 </body>
 </html>

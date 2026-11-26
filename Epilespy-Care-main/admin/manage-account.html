@@ -4,64 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Accounts | Epilepsy Care System</title>
-
     <link rel="stylesheet" href="../css/style.css">
 </head>
-<body class="login-page">
 
+<body class="sub-page">
 
     <header>
-        <h1>Epilepsy Care System</h1>
-        <p>Account Management</p>
-
+        <h2>Epilepsy Care Admin</h2>
         <nav>
             <a href="../index.html">Home</a>
             <a href="admin.html">Dashboard</a>
-            <a href="doctor-applications.html">Doctor Applications</a>
+            <a href="doctor-application.html">Doctor Applications</a>
         </nav>
     </header>
 
     <main class="container">
 
-        <section class="heading">
-            <h2>Manage User Accounts</h2>
-            <p>
-                View and manage patient, doctor and caregiver accounts
-                registered within the Epilepsy Care System.
-            </p>
+        <section class="page-heading">
+            <h1>Manage User Accounts</h1>
+            <p>View and manage patient, doctor, and caregiver accounts registered within the Epilepsy Care System.</p>
         </section>
 
         <section class="summary-cards">
-
             <div class="summary-card">
                 <h3>Patient Accounts</h3>
-                <p>70</p>
+                <p id="managePatientCount">0</p>
             </div>
 
             <div class="summary-card">
                 <h3>Doctor Accounts</h3>
-                <p>25</p>
+                <p id="manageDoctorCount">0</p>
             </div>
 
             <div class="summary-card">
                 <h3>Caregiver Accounts</h3>
-                <p>25</p>
+                <p id="manageCaregiverCount">0</p>
             </div>
-
         </section>
 
         <section class="card">
-
-            <h3>Registered Users</h3>
+            <h2>Registered Users</h2>
 
             <input
                 type="search"
+                id="accountSearchInput"
                 class="search-box"
                 placeholder="Search by name, email or user role..."
             >
 
             <div class="table-container">
-
                 <table>
                     <thead>
                         <tr>
@@ -74,89 +65,22 @@
                         </tr>
                     </thead>
 
-                    <tbody>
-
+                    <tbody id="accountsTableBody">
                         <tr>
-                            <td>USR001</td>
-                            <td>John Example</td>
-                            <td>john@example.com</td>
-                            <td>Patient</td>
-                            <td>
-                                <span class="status active">Active</span>
-                            </td>
-                            <td class="actions">
-                                <button type="button">View</button>
-                                <button type="button">Manage</button>
-                            </td>
+                            <td colspan="6" class="empty-message">Loading user accounts...</td>
                         </tr>
-
-                        <tr>
-                            <td>USR002</td>
-                            <td>Mary Example</td>
-                            <td>mary@example.com</td>
-                            <td>Doctor</td>
-                            <td>
-                                <span class="status active">Active</span>
-                            </td>
-                            <td class="actions">
-                                <button type="button">View</button>
-                                <button type="button">Manage</button>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>USR003</td>
-                            <td>Peter Example</td>
-                            <td>peter@example.com</td>
-                            <td>Caregiver</td>
-                            <td>
-                                <span class="status inactive">Inactive</span>
-                            </td>
-                            <td class="actions">
-                                <button type="button">View</button>
-                                <button type="button">Manage</button>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>USR004</td>
-                            <td>Jane Example</td>
-                            <td>jane@example.com</td>
-                            <td>Patient</td>
-                            <td>
-                                <span class="status active">Active</span>
-                            </td>
-                            <td class="actions">
-                                <button type="button">View</button>
-                                <button type="button">Manage</button>
-                            </td>
-                        </tr>
-
                     </tbody>
                 </table>
-
             </div>
         </section>
 
         <section class="card">
-            <h3>Account Management Information</h3>
+            <h2>Account Management Information</h2>
 
             <div class="information">
-                <p>
-                    The administrator is responsible for overseeing
-                    registered user accounts.
-                </p>
-
-                <p>
-                    This includes checking account information,
-                    monitoring account status and managing access
-                    according to each user's assigned role.
-                </p>
-
-                <p>
-                    User accounts should be handled securely to
-                    protect personal and medical information.
-                </p>
+                <p>The administrator is responsible for overseeing registered user accounts.</p>
+                <p>This includes checking account information, monitoring account status, and managing access according to each user's assigned role.</p>
+                <p>User accounts should be handled securely to protect personal and medical information.</p>
             </div>
         </section>
 
@@ -166,5 +90,141 @@
         <p>&copy; 2026 Epilepsy Care System. All Rights Reserved.</p>
     </footer>
 
+    <script>
+        const API_BASE = "http://127.0.0.1:5000";
+
+        // ======================================
+        // ADMIN: MANAGE USER ACCOUNTS (LIVE TABLE + SEARCH + STATUS TOGGLE)
+        // ======================================
+        const accountsTableBody = document.getElementById("accountsTableBody");
+        const accountSearchInput = document.getElementById("accountSearchInput");
+        let allManagedUsers = [];
+
+        function getAccountBadgeClass(status) {
+            if (status === "active" || status === "approved") return "badge-success";
+            if (status === "pending") return "badge-warning";
+            return "badge-danger";
+        }
+
+        function renderManagedUsers(usersList) {
+            if (!accountsTableBody) return;
+
+            if (usersList.length === 0) {
+                accountsTableBody.innerHTML =
+                    '<tr><td colspan="6" class="empty-message">No matching user accounts found.</td></tr>';
+                return;
+            }
+
+            accountsTableBody.innerHTML = usersList.map(user => {
+                const roleLabel = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+                const statusLabel = user.status.charAt(0).toUpperCase() + user.status.slice(1);
+                const badgeClass = getAccountBadgeClass(user.status);
+
+                // Pick the right toggle action based on user role and current status
+                let nextStatus, actionLabel, actionClass;
+                if (user.role === "doctor") {
+                    const isApproved = user.status === "approved";
+                    nextStatus = isApproved ? "rejected" : "approved";
+                    actionLabel = isApproved ? "Revoke" : "Approve";
+                    actionClass = isApproved ? "btn-reject" : "btn-approve";
+                } else {
+                    const isActive = user.status === "active";
+                    nextStatus = isActive ? "inactive" : "active";
+                    actionLabel = isActive ? "Deactivate" : "Activate";
+                    actionClass = isActive ? "btn-reject" : "btn-approve";
+                }
+
+                return `
+                    <tr>
+                        <td><strong>${user.display_id}</strong></td>
+                        <td>${user.full_name}</td>
+                        <td>${user.email}</td>
+                        <td>${roleLabel}</td>
+                        <td><span class="badge ${badgeClass}">${statusLabel}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button type="button" class="btn-sm btn-view" onclick="viewManagedUser('${user.role}', ${user.id})">View</button>
+                                <button type="button" class="btn-sm ${actionClass}" onclick="toggleManagedUserStatus('${user.role}', ${user.id}, '${nextStatus}')">${actionLabel}</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+        }
+
+        function viewManagedUser(role, userId) {
+            const user = allManagedUsers.find(u => u.role === role && u.id === userId);
+            if (!user) return;
+            alert(
+                `Account Details\n\n` +
+                `ID: ${user.display_id}\n` +
+                `Name: ${user.full_name}\n` +
+                `Email: ${user.email}\n` +
+                `Role: ${user.role.toUpperCase()}\n` +
+                `Status: ${user.status.toUpperCase()}\n` +
+                `${user.details}`
+            );
+        }
+
+        async function toggleManagedUserStatus(role, userId, nextStatus) {
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/users/${role}/${userId}/status`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ status: nextStatus })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message);
+                    loadManagedAccounts(); // Reload live counts & statuses from MySQL
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error("Update user status error:", error);
+                alert("Could not connect to the backend.");
+            }
+        }
+
+        async function loadManagedAccounts() {
+            if (!accountsTableBody) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/users`);
+                if (!response.ok) throw new Error(`Server returned ${response.status}`);
+
+                const data = await response.json();
+
+                document.getElementById("managePatientCount").textContent = data.counts.patients;
+                document.getElementById("manageDoctorCount").textContent = data.counts.doctors;
+                document.getElementById("manageCaregiverCount").textContent = data.counts.caregivers;
+
+                allManagedUsers = data.users;
+                renderManagedUsers(allManagedUsers);
+            } catch (error) {
+                console.error("Load managed accounts error:", error);
+                accountsTableBody.innerHTML =
+                    '<tr><td colspan="6" class="empty-message">Could not load user accounts from backend.</td></tr>';
+            }
+        }
+
+        if (accountsTableBody) {
+            loadManagedAccounts();
+
+            if (accountSearchInput) {
+                accountSearchInput.addEventListener("input", function() {
+                    const query = this.value.trim().toLowerCase();
+                    const filtered = allManagedUsers.filter(user =>
+                        user.full_name.toLowerCase().includes(query) ||
+                        user.email.toLowerCase().includes(query) ||
+                        user.role.toLowerCase().includes(query) ||
+                        user.display_id.toLowerCase().includes(query)
+                    );
+                    renderManagedUsers(filtered);
+                });
+            }
+        }
+    </script>
 </body>
 </html>

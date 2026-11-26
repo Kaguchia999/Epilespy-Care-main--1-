@@ -15,8 +15,10 @@
             <a href="../index.html">Home</a>
             <a href="admin.html">Dashboard</a>
             <a href="doctor-application.html">Doctor Applications</a>
-            <a href="manage-accounts.html">Manage Accounts</a>
+            <a href="manage-account.html">Manage Accounts</a>
             <a href="reference-data.html">Reference Data</a>
+            <a href="errors-uage.html">Errors and Usage</a>
+            <a href="#" id="logoutBtn">Logout</a>
         </nav>
     </header>
 
@@ -24,85 +26,33 @@
 
         <section class="page-heading">
             <h1>Errors and System Usage</h1>
-            <p>Monitor system activity, review reported technical errors, and assess general usage of the Epilepsy Care System.</p>
+            <p>Monitor system activity, review reported technical errors, and assess anonymised usage of the Epilepsy Care System.</p>
         </section>
 
         <section class="summary-cards">
             <div class="summary-card">
                 <h3>Total System Users</h3>
-                <p id="totalUsersCount">120</p>
+                <p id="totalUsersCount">...</p>
             </div>
 
             <div class="summary-card">
-                <h3>Reported Errors</h3>
-                <p>8</p>
+                <h3>Patients</h3>
+                <p id="patientsCardCount">...</p>
             </div>
 
             <div class="summary-card">
-                <h3>Resolved Errors</h3>
-                <p>5</p>
+                <h3>Doctors</h3>
+                <p id="doctorsCardCount">...</p>
             </div>
 
             <div class="summary-card">
-                <h3>Pending Errors</h3>
-                <p>3</p>
+                <h3>Logged Errors</h3>
+                <p id="loggedErrorsCount">...</p>
             </div>
         </section>
 
         <section class="card">
-            <h2>System Error Reports</h2>
-
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Error ID</th>
-                            <th>Error Description</th>
-                            <th>Date Reported</th>
-                            <th>Priority</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <tr>
-                            <td><strong>ERR001</strong></td>
-                            <td>Login page loading issue</td>
-                            <td>06/11/2026</td>
-                            <td>High</td>
-                            <td><span class="badge badge-danger">Unresolved</span></td>
-                        </tr>
-
-                        <tr>
-                            <td><strong>ERR002</strong></td>
-                            <td>Profile update error</td>
-                            <td>05/11/2026</td>
-                            <td>Medium</td>
-                            <td><span class="badge badge-success">Resolved</span></td>
-                        </tr>
-
-                        <tr>
-                            <td><strong>ERR003</strong></td>
-                            <td>Report generation issue</td>
-                            <td>04/11/2026</td>
-                            <td>Low</td>
-                            <td><span class="badge badge-warning">Pending</span></td>
-                        </tr>
-
-                        <tr>
-                            <td><strong>ERR004</strong></td>
-                            <td>Medication record display issue</td>
-                            <td>03/11/2026</td>
-                            <td>Medium</td>
-                            <td><span class="badge badge-success">Resolved</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <section class="card">
-            <h2>System Usage Overview</h2>
+            <h2>System Usage Overview (Anonymised)</h2>
 
             <div class="table-container">
                 <table>
@@ -117,20 +67,47 @@
                     <tbody>
                         <tr>
                             <td><strong>Patients</strong></td>
-                            <td id="patientUsersCount">70</td>
+                            <td id="patientUsersCount">...</td>
                             <td>Medication and health record management</td>
                         </tr>
 
                         <tr>
                             <td><strong>Doctors</strong></td>
-                            <td id="doctorUsersCount">25</td>
+                            <td id="doctorUsersCount">...</td>
                             <td>Viewing shared summaries and consultations</td>
                         </tr>
 
                         <tr>
                             <td><strong>Caregivers</strong></td>
-                            <td id="caregiverUsersCount">25</td>
+                            <td id="caregiverUsersCount">...</td>
                             <td>Help requests and dose monitoring</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <button type="button" class="btn" id="generateReportBtn" style="margin-top: 1rem;">
+                Generate Usage Report
+            </button>
+        </section>
+
+        <section class="card">
+            <h2>System Error Log</h2>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Error ID</th>
+                            <th>Module</th>
+                            <th>Error Description</th>
+                            <th>Date Logged</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="errorLogBody">
+                        <tr>
+                            <td colspan="4">Loading error logs...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -144,7 +121,7 @@
                 <p>The administrator uses this section to monitor the general performance and usage of the system.</p>
                 <p>Technical errors can be reviewed and forwarded to the responsible technical personnel for investigation.</p>
                 <p>System usage information helps the administrator understand how different users interact with the system.</p>
-                <p>Medical records and sensitive patient information should not be exposed in general system monitoring reports.</p>
+                <p>Medical records and sensitive patient information are never exposed in general system monitoring reports.</p>
             </div>
         </section>
 
@@ -154,6 +131,88 @@
         <p>&copy; 2026 Epilepsy Care System. All Rights Reserved.</p>
     </footer>
 
-    <script src="../js/script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const apiBase = "http://127.0.0.1:5000";
+
+            // Logout handler
+            const logoutBtn = document.getElementById("logoutBtn");
+            if (logoutBtn) {
+                logoutBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    localStorage.clear();
+                    window.location.href = "login.html";
+                });
+            }
+
+            // Print / Save PDF usage report
+            const reportBtn = document.getElementById("generateReportBtn");
+            if (reportBtn) {
+                reportBtn.addEventListener("click", () => window.print());
+            }
+
+            // 1. Load live user counts from /api/admin/usage-stats
+            try {
+                const res = await fetch(`${apiBase}/api/admin/usage-stats`);
+                if (!res.ok) throw new Error("Failed to load usage stats");
+                const stats = await res.json();
+
+                document.getElementById("totalUsersCount").textContent = stats.total_users ?? 0;
+                document.getElementById("patientsCardCount").textContent = stats.patients ?? 0;
+                document.getElementById("doctorsCardCount").textContent = stats.doctors ?? 0;
+
+                document.getElementById("patientUsersCount").textContent = stats.patients ?? 0;
+                document.getElementById("doctorUsersCount").textContent = stats.doctors ?? 0;
+                document.getElementById("caregiverUsersCount").textContent = stats.caregivers ?? 0;
+            } catch (err) {
+                console.error("Usage stats error:", err);
+                ["totalUsersCount", "patientsCardCount", "doctorsCardCount", "patientUsersCount", "doctorUsersCount", "caregiverUsersCount"]
+                    .forEach((id) => {
+                        document.getElementById(id).textContent = "-";
+                    });
+            }
+
+            // 2. Load live error logs from /api/admin/errors
+            const errorBody = document.getElementById("errorLogBody");
+            const errorCountEl = document.getElementById("loggedErrorsCount");
+
+            try {
+                const res = await fetch(`${apiBase}/api/admin/errors`);
+                if (!res.ok) throw new Error("Error log endpoint unavailable");
+                const errors = await res.json();
+
+                errorCountEl.textContent = errors.length;
+                errorBody.innerHTML = "";
+
+                if (errors.length === 0) {
+                    errorBody.innerHTML = `<tr><td colspan="4">No system errors logged.</td></tr>`;
+                    return;
+                }
+
+                errors.forEach((errItem) => {
+                    const tr = document.createElement("tr");
+
+                    const idTd = document.createElement("td");
+                    idTd.innerHTML = `<strong>ERR${String(errItem.error_id).padStart(3, "0")}</strong>`;
+
+                    const moduleTd = document.createElement("td");
+                    moduleTd.textContent = errItem.module || "General";
+
+                    const msgTd = document.createElement("td");
+                    msgTd.textContent = errItem.message || "-";
+
+                    const dateTd = document.createElement("td");
+                    dateTd.textContent = errItem.logged_at || "-";
+
+                    tr.append(idTd, moduleTd, msgTd, dateTd);
+                    errorBody.appendChild(tr);
+                });
+            } catch (err) {
+                console.error("Error log fetch error:", err);
+                errorCountEl.textContent = "0";
+                errorBody.innerHTML = `<tr><td colspan="4">No error logs loaded yet. Make sure /api/admin/errors is added to app.py.</td></tr>`;
+            }
+        });
+    </script>
 </body>
 </html>

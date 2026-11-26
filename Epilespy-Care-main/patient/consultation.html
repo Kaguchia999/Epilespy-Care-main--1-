@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Summary &amp; Consultation Notes | Epilepsy Care</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .summary-header-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+        }
+        .patient-meta {
+            color: #6b627d;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        .btn-sm {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-view {
+            background-color: #f2ecf9;
+            color: #522d80;
+            border: 1px solid #d8c8ee;
+        }
+        @media print {
+            header, footer, .no-print { display: none !important; }
+            .sub-page .container { width: 100%; margin: 0; max-width: 100%; }
+            .sub-page .card { box-shadow: none; break-inside: avoid; border: 1px solid #d8c8ee; }
+        }
+    </style>
+</head>
+
+<body class="sub-page">
+
+    <header>
+        <h2>Epilepsy Care</h2>
+        <nav>
+            <a href="../index.html">Home</a>
+            <a href="patient.html">Dashboard</a>
+            <a href="medication.html">Medication</a>
+            <a href="health-records.html">Health Records</a>
+            <a href="consultation-summary.html">Summary &amp; Notes</a>
+        </nav>
+    </header>
+
+    <main class="container">
+
+        <section class="page-heading">
+            <div class="summary-header-bar">
+                <div>
+                    <h1>Pre-Visit Summary &amp; Consultation Notes</h1>
+                    <p>Review your doctor's consultation notes or print a complete clinical summary before your next appointment.</p>
+                </div>
+                <button type="button" class="btn no-print" onclick="window.print()">Print / Save PDF</button>
+            </div>
+        </section>
+
+        <section class="card" id="statusCard">
+            <p class="empty-message" id="statusMessage">Loading your health summary...</p>
+        </section>
+
+        <div id="patientSummaryContent" style="display: none;">
+
+            <section class="card">
+                <div class="summary-header-bar">
+                    <div>
+                        <h2 id="patientNameHeading" style="margin-bottom: 4px;">Patient Name</h2>
+                        <p id="patientContactInfo" class="patient-meta"></p>
+                    </div>
+                    <p id="generatedTimestamp" class="patient-meta"></p>
+                </div>
+            </section>
+
+            <section class="summary-cards">
+                <div class="summary-card">
+                    <h3>Doctor Consultations</h3>
+                    <p id="kpiConsultations">0</p>
+                </div>
+
+                <div class="summary-card">
+                    <h3>Active Medications</h3>
+                    <p id="kpiActiveMeds">0</p>
+                </div>
+
+                <div class="summary-card">
+                    <h3>Seizures Logged</h3>
+                    <p id="kpiSeizures">0</p>
+                </div>
+
+                <div class="summary-card">
+                    <h3>Dose Adherence</h3>
+                    <p id="kpiAdherence">No logs</p>
+                </div>
+            </section>
+
+            <!-- Doctor Consultation Notes -->
+            <section class="card">
+                <h2>Doctor Consultation Summaries</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Doctor &amp; Facility</th>
+                                <th>Assessment</th>
+                                <th>Treatment Plan</th>
+                                <th>Next Follow-Up</th>
+                                <th class="no-print">Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patientConsultationsBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Active Medications -->
+            <section class="card">
+                <h2>Current Medications &amp; Reminder Schedule</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Medication</th>
+                                <th>Dosage</th>
+                                <th>Frequency</th>
+                                <th>Reminder Time</th>
+                                <th>Instructions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patientMedsBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Seizure History -->
+            <section class="card">
+                <h2>Seizure History</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Seizure Type</th>
+                                <th>Duration</th>
+                                <th>Symptoms &amp; Observations</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patientSeizuresBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Symptom Logs -->
+            <section class="card">
+                <h2>Symptoms &amp; General Observations</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Symptom</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patientSymptomsBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Reported Side Effects -->
+            <section class="card">
+                <h2>Reported Medication Side Effects</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Medication</th>
+                                <th>Side Effect</th>
+                                <th>Severity</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patientSideEffectsBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Recent Dose Logs -->
+            <section class="card">
+                <h2>Recent Medication Dose Logs</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Medication</th>
+                                <th>Scheduled Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patientDoseLogsBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Epilepsy Care System. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        const API_BASE = "http://127.0.0.1:5000";
+
+        const statusCard = document.getElementById("statusCard");
+        const statusMessage = document.getElementById("statusMessage");
+        const summaryContent = document.getElementById("patientSummaryContent");
+        let savedConsultations = [];
+
+        function esc(value) {
+            return String(value ?? "-")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        function viewNoteDetails(consultationId) {
+            const note = savedConsultations.find(c => c.consultation_id === consultationId);
+            if (!note) return;
+
+            alert(
+                `Doctor Consultation Note\n\n` +
+                `Date: ${note.consultation_date}\n` +
+                `Doctor: ${note.doctor_name} (${note.facility})\n` +
+                `Assessment: ${note.diagnosis}\n` +
+                `Treatment Plan: ${note.treatment_plan || "None specified"}\n` +
+                `Additional Notes: ${note.notes || "None"}\n` +
+                `Next Follow-Up: ${note.follow_up_date || "Not scheduled"}`
+            );
+        }
+
+        async function loadPatientSummaryPage() {
+            const patientId = localStorage.getItem("patient_id");
+            if (!patientId) {
+                statusMessage.innerHTML =
+                    'Please log in on the <a href="login.html" style="color:#6b3fa0;font-weight:600;">Patient Login</a> page first to view your health summary and consultation notes.';
+                return;
+            }
+
+            try {
+                const [summaryRes, consultRes] = await Promise.all([
+                    fetch(`${API_BASE}/api/patient/${patientId}/summary`),
+                    fetch(`${API_BASE}/api/patient/${patientId}/consultations`)
+                ]);
+
+                if (!summaryRes.ok) throw new Error(`Summary returned ${summaryRes.status}`);
+
+                const summary = await summaryRes.json();
+                savedConsultations = consultRes.ok ? await consultRes.json() : [];
+
+                // Banner & KPIs
+                document.getElementById("patientNameHeading").textContent = summary.patient.full_name;
+                document.getElementById("patientContactInfo").textContent =
+                    `Email: ${summary.patient.email}  |  Phone: ${summary.patient.phone || "Not provided"}`;
+                document.getElementById("generatedTimestamp").textContent =
+                    `Generated: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+
+                document.getElementById("kpiConsultations").textContent = savedConsultations.length;
+                document.getElementById("kpiActiveMeds").textContent = summary.stats.active_medications;
+                document.getElementById("kpiSeizures").textContent = summary.stats.total_seizures;
+                document.getElementById("kpiAdherence").textContent =
+                    summary.stats.adherence_rate !== null ? `${summary.stats.adherence_rate}%` : "No logs";
+
+                // 1. Doctor Consultation Notes
+                document.getElementById("patientConsultationsBody").innerHTML = savedConsultations.length
+                    ? savedConsultations.map(c => `
+                        <tr>
+                            <td><strong>${esc(c.consultation_date)}</strong></td>
+                            <td>${esc(c.doctor_name)}<br><small style="color:#6b627d;">${esc(c.facility)}</small></td>
+                            <td>${esc(c.diagnosis)}</td>
+                            <td>${esc(c.treatment_plan || "-")}</td>
+                            <td>${c.follow_up_date ? `<span class="badge badge-warning">${esc(c.follow_up_date)}</span>` : "-"}</td>
+                            <td class="no-print">
+                                <button type="button" class="btn-sm btn-view" onclick="viewNoteDetails(${c.consultation_id})">View</button>
+                            </td>
+                        </tr>
+                    `).join("")
+                    : '<tr><td colspan="6" class="empty-message">No doctor consultation notes have been recorded for you yet.</td></tr>';
+
+                // 2. Medications
+                document.getElementById("patientMedsBody").innerHTML = summary.medications.length
+                    ? summary.medications.map(m => `
+                        <tr>
+                            <td><strong>${esc(m.medication_name)}</strong></td>
+                            <td>${esc(m.strength || "-")}</td>
+                            <td>${esc(m.frequency || "-")}</td>
+                            <td>${esc(m.reminder_time || "-")}</td>
+                            <td>${esc(m.instructions || "-")}</td>
+                        </tr>
+                    `).join("")
+                    : '<tr><td colspan="5" class="empty-message">No active medications recorded.</td></tr>';
+
+                // 3. Seizures
+                document.getElementById("patientSeizuresBody").innerHTML = summary.seizures.length
+                    ? summary.seizures.map(s => `
+                        <tr>
+                            <td><strong>${esc(s.record_date)}</strong></td>
+                            <td><span class="badge badge-danger">${esc(s.seizure_type || "Unspecified")}</span></td>
+                            <td>${s.duration_secs !== null ? `${esc(s.duration_secs)}s` : "-"}</td>
+                            <td>${esc(s.notes || "-")}</td>
+                        </tr>
+                    `).join("")
+                    : '<tr><td colspan="4" class="empty-message">No seizures logged.</td></tr>';
+
+                // 4. Symptoms
+                document.getElementById("patientSymptomsBody").innerHTML = summary.symptoms.length
+                    ? summary.symptoms.map(sym => `
+                        <tr>
+                            <td><strong>${esc(sym.record_date)}</strong></td>
+                            <td>${esc(sym.symptom || "-")}</td>
+                            <td>${esc(sym.notes || "-")}</td>
+                        </tr>
+                    `).join("")
+                    : '<tr><td colspan="3" class="empty-message">No general symptoms logged.</td></tr>';
+
+                // 5. Side effects
+                document.getElementById("patientSideEffectsBody").innerHTML = summary.side_effects.length
+                    ? summary.side_effects.map(ef => {
+                        const sevClass = ef.severity === "Severe"
+                            ? "badge-danger"
+                            : ef.severity === "Moderate" ? "badge-warning" : "badge-success";
+                        return `
+                            <tr>
+                                <td><strong>${esc(ef.record_date)}</strong></td>
+                                <td>${esc(ef.medication_name)}</td>
+                                <td>${esc(ef.effect)}</td>
+                                <td><span class="badge ${sevClass}">${esc(ef.severity)}</span></td>
+                                <td>${esc(ef.notes)}</td>
+                            </tr>
+                        `;
+                    }).join("")
+                    : '<tr><td colspan="5" class="empty-message">No medication side effects reported.</td></tr>';
+
+                // 6. Dose logs
+                document.getElementById("patientDoseLogsBody").innerHTML = summary.dose_logs.length
+                    ? summary.dose_logs.map(dl => `
+                        <tr>
+                            <td><strong>${esc(dl.dose_date)}</strong></td>
+                            <td>${esc(dl.medication_name)}</td>
+                            <td>${esc(dl.reminder_time || "-")}</td>
+                            <td>
+                                <span class="badge ${dl.status === "taken" ? "badge-success" : "badge-danger"}">
+                                    ${esc(dl.status).toUpperCase()}
+                                </span>
+                            </td>
+                        </tr>
+                    `).join("")
+                    : '<tr><td colspan="4" class="empty-message">No dose logs recorded yet.</td></tr>';
+
+                statusCard.style.display = "none";
+                summaryContent.style.display = "block";
+            } catch (error) {
+                console.error("Load patient summary error:", error);
+                statusMessage.textContent = "Could not load your health summary. Check that python app.py is running.";
+            }
+        }
+
+        loadPatientSummaryPage();
+    </script>
+</body>
+</html>

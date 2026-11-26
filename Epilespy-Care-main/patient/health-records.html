@@ -15,13 +15,15 @@
             <a href="../index.html">Home</a>
             <a href="patient.html">Dashboard</a>
             <a href="medication.html">Medication</a>
+            <a href="health-records.html">Health Records</a>
+            <a href="consultation.html">Summary &amp; Notes</a>
         </nav>
     </header>
 
     <main class="container">
         <section class="page-heading">
             <h1>Health Records</h1>
-            <p>Record and review your health information, seizure occurrences, symptoms and other observations.</p>
+            <p>Record and review your health information, seizure occurrences, symptoms, and observations.</p>
         </section>
 
         <section class="card">
@@ -44,14 +46,15 @@
                     </div>
                 </div>
 
-                <div class="form-row">
+                <!-- Automatically shown when "Yes" is selected -->
+                <div class="form-row" id="seizureDetailsRow" style="display: none;">
                     <div class="form-group">
                         <label for="seizure-type">Seizure Type (if known)</label>
                         <input type="text" id="seizure-type" placeholder="e.g. Focal, Tonic-clonic">
                     </div>
 
                     <div class="form-group">
-                        <label for="duration">Seizure Duration in Seconds (if applicable)</label>
+                        <label for="duration">Seizure Duration in Seconds</label>
                         <input type="number" id="duration" min="0" placeholder="e.g. 120">
                     </div>
                 </div>
@@ -66,34 +69,36 @@
                     <textarea id="observations" placeholder="Enter any additional health observations"></textarea>
                 </div>
 
-                <button type="submit" class="btn">Save Health Record</button>
+                <button type="submit" id="saveRecordBtn" class="btn">Save Health Record</button>
             </form>
         </section>
 
         <section class="card">
             <h2>Previous Health Records</h2>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Seizure Occurrence</th>
-                        <th>Symptoms</th>
-                        <th>Observations</th>
-                    </tr>
-                </thead>
-                <tbody id="healthRecordsTableBody">
-                    <tr>
-                        <td colspan="4" class="empty-message">Loading health records...</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Seizure Occurrence</th>
+                            <th>Symptoms</th>
+                            <th>Observations</th>
+                        </tr>
+                    </thead>
+                    <tbody id="healthRecordsTableBody">
+                        <tr>
+                            <td colspan="4" class="empty-message">Loading health records...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
 
         <section class="card">
             <h2>Health Record Information</h2>
             <div class="information">
-                Keeping accurate health records can help patients monitor their condition and provide useful information during consultations with healthcare professionals.
+                Keeping accurate health records helps you track patterns over time and automatically powers your pre-consultation summary for your doctor.
             </div>
         </section>
     </main>
@@ -102,6 +107,128 @@
         <p>&copy; 2026 Epilepsy Care System. All Rights Reserved.</p>
     </footer>
 
-    <script src="../js/script.js"></script>
+    <script>
+        const API_BASE = "http://127.0.0.1:5000";
+
+        const healthRecordForm = document.getElementById("healthRecordForm");
+        const saveRecordBtn = document.getElementById("saveRecordBtn");
+        const healthRecordsTableBody = document.getElementById("healthRecordsTableBody");
+        const recordDateInput = document.getElementById("record-date");
+        const seizureSelect = document.getElementById("seizure");
+        const seizureDetailsRow = document.getElementById("seizureDetailsRow");
+
+        function getTodayLocal() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, "0");
+            const day = String(now.getDate()).padStart(2, "0");
+            return `${year}-${month}-${day}`;
+        }
+
+        function esc(value) {
+            return String(value ?? "-")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        recordDateInput.value = getTodayLocal();
+
+        seizureSelect.addEventListener("change", function() {
+            seizureDetailsRow.style.display = this.value === "Yes" ? "grid" : "none";
+        });
+
+        async function loadHealthRecords() {
+            const patientId = localStorage.getItem("patient_id");
+            if (!patientId) {
+                healthRecordsTableBody.innerHTML =
+                    '<tr><td colspan="4" class="empty-message">Please log in on the <a href="login.html" style="color:#6b3fa0;font-weight:600;">Patient Login</a> page first to view your records.</td></tr>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/health-records/${patientId}`);
+                if (!response.ok) throw new Error(`Server returned ${response.status}`);
+
+                const records = await response.json();
+
+                if (records.length === 0) {
+                    healthRecordsTableBody.innerHTML =
+                        '<tr><td colspan="4" class="empty-message">No health records have been added yet.</td></tr>';
+                    return;
+                }
+
+                healthRecordsTableBody.innerHTML = records.map(rec => `
+                    <tr>
+                        <td><strong>${esc(rec.record_date)}</strong></td>
+                        <td>
+                            <span class="badge ${rec.had_seizure ? "badge-danger" : "badge-success"}">
+                                ${esc(rec.seizure_occurrence)}
+                            </span>
+                        </td>
+                        <td>${esc(rec.symptoms)}</td>
+                        <td>${esc(rec.observations)}</td>
+                    </tr>
+                `).join("");
+            } catch (error) {
+                console.error("Load health records error:", error);
+                healthRecordsTableBody.innerHTML =
+                    '<tr><td colspan="4" class="empty-message">Could not load health records from backend. Check that python app.py is running.</td></tr>';
+            }
+        }
+
+        healthRecordForm.addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const patientId = localStorage.getItem("patient_id");
+            if (!patientId) {
+                alert("Please log in as a patient first.");
+                window.location.href = "login.html";
+                return;
+            }
+
+            const payload = {
+                patient_id: Number(patientId),
+                record_date: recordDateInput.value,
+                seizure: seizureSelect.value,
+                seizure_type: document.getElementById("seizure-type").value.trim(),
+                duration_secs: document.getElementById("duration").value,
+                symptoms: document.getElementById("symptoms").value.trim(),
+                observations: document.getElementById("observations").value.trim()
+            };
+
+            saveRecordBtn.disabled = true;
+            saveRecordBtn.textContent = "Saving...";
+
+            try {
+                const response = await fetch(`${API_BASE}/api/health-records`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(result.message || "Health record saved successfully!");
+                    healthRecordForm.reset();
+                    recordDateInput.value = getTodayLocal();
+                    seizureDetailsRow.style.display = "none";
+                    loadHealthRecords();
+                } else {
+                    alert(result.message || result.error || "Could not save health record.");
+                }
+            } catch (error) {
+                console.error("Save health record error:", error);
+                alert("Could not connect to the backend. Check that python app.py is running.");
+            } finally {
+                saveRecordBtn.disabled = false;
+                saveRecordBtn.textContent = "Save Health Record";
+            }
+        });
+
+        loadHealthRecords();
+    </script>
 </body>
 </html>

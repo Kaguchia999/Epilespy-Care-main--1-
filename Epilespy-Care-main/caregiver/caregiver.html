@@ -4,26 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Caregiver Dashboard | Epilepsy Care</title>
-
-   
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 
 <body class="caregiver-page">
-    
-<link rel="stylesheet" href="../css/style.css">
+
     <!-- HEADER -->
     <header>
         <h1>Epilepsy Care System</h1>
 
-<nav>
-    <a href="../index.html">Home</a>
-    <a href="caregiver.html">Dashboard</a>
-    <a href="accept-invitation.html">Invitations</a>
-    <a href="help-requests.html">Help Requests</a>
-    <a href="dose-status.html">Dose Status</a>
-    <a href="login.html">Login</a>
-</nav>
-
+        <nav>
+            <a href="../index.html">Home</a>
+            <a href="caregiver.html">Dashboard</a>
+            <a href="accept-invitation.html">Invitations</a>
+            <a href="help-request.html">Help Requests</a>
+            <a href="dose-status.html">Dose Status</a>
+            <a href="#" id="logoutBtn">Logout</a>
+        </nav>
     </header>
 
     <!-- MAIN CONTENT -->
@@ -31,7 +28,7 @@
 
         <!-- WELCOME SECTION -->
         <section class="welcome">
-            <h2>Caregiver Dashboard</h2>
+            <h2 id="welcomeHeading">Caregiver Dashboard</h2>
 
             <p>
                 Welcome to the Epilepsy Care System Caregiver Dashboard.
@@ -46,17 +43,17 @@
 
             <div class="summary-card">
                 <h3>Linked Patients</h3>
-                <p>0</p>
+                <p id="linkedPatientsCount">0</p>
             </div>
 
             <div class="summary-card">
                 <h3>Help Requests</h3>
-                <p>0</p>
+                <p id="helpRequestsCount">0</p>
             </div>
 
             <div class="summary-card">
                 <h3>Dose Updates</h3>
-                <p>0</p>
+                <p id="doseUpdatesCount">0</p>
             </div>
 
         </section>
@@ -64,55 +61,47 @@
         <!-- CAREGIVER SERVICES -->
         <h2 class="section-title">Caregiver Services</h2>
 
-        <section class="service-cards">
+        <section class="services">
 
-            <div class="service-card">
+            <div class="service-card card">
                 <h3>Patient Invitations</h3>
-
                 <p>
                     View and respond to invitations from patients
                     who want to connect with you as their caregiver.
                 </p>
-
                 <a href="accept-invitation.html" class="btn">
                     View Invitations
                 </a>
             </div>
 
-            <div class="service-card">
+            <div class="service-card card">
                 <h3>Help Requests</h3>
-
                 <p>
                     View help requests sent by linked patients
                     and check the details of their requests.
                 </p>
-
-                <a href="help-requests.html" class="btn">
+                <a href="help-request.html" class="btn">
                     View Help Requests
                 </a>
             </div>
 
-            <div class="service-card">
+            <div class="service-card card">
                 <h3>Medication Dose Status</h3>
-
                 <p>
                     View medication dose updates shared by patients,
                     including doses taken or missed.
                 </p>
-
                 <a href="dose-status.html" class="btn">
                     View Dose Status
                 </a>
             </div>
 
-            <div class="service-card">
+            <div class="service-card card">
                 <h3>Caregiver Account</h3>
-
                 <p>
-                    Access your caregiver account and view
-                    your account information.
+                    Sign in or switch caregiver accounts
+                    within the system.
                 </p>
-
                 <a href="login.html" class="btn">
                     Caregiver Login
                 </a>
@@ -121,34 +110,31 @@
         </section>
 
         <!-- RECENT HELP REQUESTS -->
-        <section class="requests-section">
-
+        <section class="card requests-section">
             <h2>Recent Help Requests</h2>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Patient Name</th>
-                        <th>Date</th>
-                        <th>Request Details</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Patient Name</th>
+                            <th>Date</th>
+                            <th>Request Details</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
 
-                <tbody>
-                    <tr>
-                        <td colspan="4">
-                            No help requests available yet.
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
+                    <tbody id="recentRequestsBody">
+                        <tr>
+                            <td colspan="4">No help requests available yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
 
         <!-- INFORMATION SECTION -->
         <section class="information">
-
             <h2>Important Information</h2>
 
             <p>
@@ -157,7 +143,6 @@
                 authorised them to view. This website should
                 not be used as a substitute for emergency services.
             </p>
-
         </section>
 
     </main>
@@ -166,6 +151,93 @@
     <footer>
         <p>&copy; 2026 Epilepsy Care System. All Rights Reserved.</p>
     </footer>
+
+<script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const API_BASE = "http://127.0.0.1:5000";
+
+            // Show logged-in caregiver's name
+            const caregiverName = localStorage.getItem("full_name");
+            if (caregiverName && localStorage.getItem("role") === "caregiver") {
+                document.getElementById("welcomeHeading").textContent = `Welcome, ${caregiverName}`;
+            }
+
+            // Show 1 if a patient is linked to this caregiver
+            const linkedPatientId = localStorage.getItem("linked_patient_id");
+            if (linkedPatientId) {
+                document.getElementById("linkedPatientsCount").textContent = "1";
+            }
+
+            // Load help requests count and recent requests preview
+            const caregiverId = Number(localStorage.getItem("caregiver_id"));
+            const helpCountEl = document.getElementById("helpRequestsCount");
+            const recentBody = document.getElementById("recentRequestsBody");
+
+            if (caregiverId) {
+                try {
+                    const res = await fetch(`${API_BASE}/api/help-requests/caregiver/${caregiverId}`);
+                    const requests = await res.json();
+
+                    if (res.ok && Array.isArray(requests)) {
+                        if (helpCountEl) {
+                            helpCountEl.textContent = requests.length;
+                        }
+
+                        if (recentBody && requests.length > 0) {
+                            recentBody.innerHTML = "";
+                            requests.slice(0, 5).forEach((req) => {
+                                const isAck = (req.status || "").toLowerCase() === "acknowledged";
+                                const tr = document.createElement("tr");
+                                tr.innerHTML = `
+                                    <td>${req.patient_name}</td>
+                                    <td>${req.date_sent}</td>
+                                    <td>${req.message}</td>
+                                    <td><span class="status ${isAck ? "acknowledged" : "pending"}">${isAck ? "Acknowledged" : "Pending"}</span></td>
+                                `;
+                                recentBody.appendChild(tr);
+                            });
+                        }
+                    }
+                } catch (err) {
+                    console.error("Failed to load dashboard help requests:", err);
+                }
+            }
+
+            // Logout button
+            const logoutBtn = document.getElementById("logoutBtn");
+            if (logoutBtn) {
+                logoutBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    localStorage.clear();
+                    window.location.href = "login.html";
+                });
+            }
+        });
+    </script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Show logged-in caregiver's name
+            const caregiverName = localStorage.getItem("full_name");
+            if (caregiverName && localStorage.getItem("role") === "caregiver") {
+                document.getElementById("welcomeHeading").textContent = `Welcome, ${caregiverName}`;
+            }
+
+            // Show 1 if a patient is linked to this caregiver
+            const linkedPatientId = localStorage.getItem("linked_patient_id");
+            if (linkedPatientId) {
+                document.getElementById("linkedPatientsCount").textContent = "1";
+            }
+
+            // Logout button
+            const logoutBtn = document.getElementById("logoutBtn");
+            if (logoutBtn) {
+                logoutBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    localStorage.clear();
+                    window.location.href = "login.html";
+                });
+            }
+        });
+    
 
 </body>
 </html>

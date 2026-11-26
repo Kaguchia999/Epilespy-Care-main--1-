@@ -5,181 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dose Status | Epilepsy Care System</title>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: #f4f7fc;
-            color: #333;
-        }
-
-        header {
-            background-color: #2457a6;
-            color: white;
-            padding: 20px 7%;
-        }
-
-        header h1 {
-            margin-bottom: 8px;
-        }
-
-        nav {
-            margin-top: 15px;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin-right: 20px;
-            font-weight: bold;
-        }
-
-        nav a:hover {
-            text-decoration: underline;
-        }
-
-        .container {
-            width: 86%;
-            max-width: 1100px;
-            margin: 35px auto;
-        }
-
-        .page-heading {
-            margin-bottom: 25px;
-        }
-
-        .page-heading h2 {
-            color: #2457a6;
-            margin-bottom: 10px;
-        }
-
-        .page-heading p {
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .summary-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-
-        .summary-card {
-            background-color: white;
-            padding: 22px;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-        }
-
-        .summary-card h3 {
-            color: #2457a6;
-            margin-bottom: 12px;
-            font-size: 16px;
-        }
-
-        .summary-card p {
-            font-size: 25px;
-            font-weight: bold;
-        }
-
-        .card {
-            background-color: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-            margin-bottom: 25px;
-        }
-
-        .card h3 {
-            color: #2457a6;
-            margin-bottom: 20px;
-        }
-
-        .table-container {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 650px;
-        }
-
-        th, td {
-            padding: 14px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #eaf0fa;
-            color: #2457a6;
-        }
-
-        .status {
-            display: inline-block;
-            padding: 6px 10px;
-            border-radius: 5px;
-            font-size: 13px;
-            font-weight: bold;
-        }
-
-        .taken {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .missed {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        .pending {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-
-        .information {
-            line-height: 1.7;
-            color: #555;
-        }
-
-        footer {
-            background-color: #2457a6;
-            color: white;
-            text-align: center;
-            padding: 18px;
-            margin-top: 40px;
-        }
-
-        @media (max-width: 650px) {
-            .container {
-                width: 92%;
-            }
-
-            header {
-                padding: 20px 4%;
-            }
-
-            nav a {
-                display: inline-block;
-                margin: 8px 12px 0 0;
-            }
-
-            .card {
-                padding: 18px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 
-<body>
+<body class="sub-page">
 
     <header>
         <h1>Epilepsy Care System</h1>
@@ -188,8 +17,10 @@
         <nav>
             <a href="../index.html">Home</a>
             <a href="caregiver.html">Dashboard</a>
-            <a href="help-requests.html">Help Requests</a>
             <a href="accept-invitation.html">Invitations</a>
+            <a href="help-request.html">Help Requests</a>
+            <a href="dose-status.html">Dose Status</a>
+            <a href="#" id="logoutBtn">Logout</a>
         </nav>
     </header>
 
@@ -207,17 +38,17 @@
 
             <div class="summary-card">
                 <h3>Doses Taken</h3>
-                <p>12</p>
+                <p id="takenCount">0</p>
             </div>
 
             <div class="summary-card">
                 <h3>Missed Doses</h3>
-                <p>2</p>
+                <p id="missedCount">0</p>
             </div>
 
             <div class="summary-card">
                 <h3>Pending Updates</h3>
-                <p>3</p>
+                <p id="pendingCount">0</p>
             </div>
 
         </section>
@@ -237,35 +68,9 @@
                         </tr>
                     </thead>
 
-                    <tbody>
+                    <tbody id="doseRecordsBody">
                         <tr>
-                            <td>Patient Example 1</td>
-                            <td>Medication A</td>
-                            <td>8:00 AM</td>
-                            <td>
-                                <span class="status taken">Taken</span>
-                            </td>
-                            <td>06/11/2026</td>
-                        </tr>
-
-                        <tr>
-                            <td>Patient Example 2</td>
-                            <td>Medication B</td>
-                            <td>2:00 PM</td>
-                            <td>
-                                <span class="status missed">Missed</span>
-                            </td>
-                            <td>06/11/2026</td>
-                        </tr>
-
-                        <tr>
-                            <td>Patient Example 3</td>
-                            <td>Medication C</td>
-                            <td>8:00 PM</td>
-                            <td>
-                                <span class="status pending">Pending</span>
-                            </td>
-                            <td>06/11/2026</td>
+                            <td colspan="5">Loading dose records...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -301,6 +106,102 @@
     <footer>
         <p>&copy; 2026 Epilepsy Care System. All Rights Reserved.</p>
     </footer>
+
+    <script>
+        const API_BASE = "http://127.0.0.1:5000";
+
+        document.getElementById("logoutBtn").addEventListener("click", (e) => {
+            e.preventDefault();
+            localStorage.clear();
+            window.location.href = "login.html";
+        });
+
+        function formatDoseDate(dateStr) {
+            if (!dateStr) return "-";
+            const parts = dateStr.split("-");
+            if (parts.length === 3) {
+                return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+            return dateStr;
+        }
+
+        async function loadDoseRecords() {
+            const caregiverId = Number(localStorage.getItem("caregiver_id"));
+            const tbody = document.getElementById("doseRecordsBody");
+            const takenEl = document.getElementById("takenCount");
+            const missedEl = document.getElementById("missedCount");
+            const pendingEl = document.getElementById("pendingCount");
+
+            if (!caregiverId) {
+                tbody.innerHTML = `<tr><td colspan="5">Please log in as a caregiver to view dose records.</td></tr>`;
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/api/dose-logs/caregiver/${caregiverId}`);
+                const logs = await res.json();
+
+                if (!res.ok) {
+                    tbody.innerHTML = `<tr><td colspan="5">${logs.error || "Could not load dose records."}</td></tr>`;
+                    return;
+                }
+
+                if (!Array.isArray(logs) || logs.length === 0) {
+                    takenEl.textContent = "0";
+                    missedEl.textContent = "0";
+                    pendingEl.textContent = "0";
+                    tbody.innerHTML = `<tr><td colspan="5">No medication dose updates logged yet.</td></tr>`;
+                    return;
+                }
+
+                let takenCount = 0;
+                let missedCount = 0;
+                let pendingCount = 0;
+
+                tbody.innerHTML = "";
+                logs.forEach((row) => {
+                    const statusLower = (row.status || "pending").toLowerCase();
+                    let badgeClass = "pending";
+                    let badgeLabel = "Pending";
+
+                    if (statusLower === "taken") {
+                        takenCount += 1;
+                        badgeClass = "taken";
+                        badgeLabel = "Taken";
+                    } else if (statusLower === "missed") {
+                        missedCount += 1;
+                        badgeClass = "missed";
+                        badgeLabel = "Missed";
+                    } else {
+                        pendingCount += 1;
+                    }
+
+                    const medLabel = row.strength
+                        ? `${row.medication_name} (${row.strength})`
+                        : row.medication_name;
+
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>${row.patient_name}</td>
+                        <td>${medLabel}</td>
+                        <td>${row.reminder_time || "-"}</td>
+                        <td><span class="status ${badgeClass}">${badgeLabel}</span></td>
+                        <td>${formatDoseDate(row.dose_date)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                takenEl.textContent = String(takenCount);
+                missedEl.textContent = String(missedCount);
+                pendingEl.textContent = String(pendingCount);
+            } catch (err) {
+                console.error("Error loading dose records:", err);
+                tbody.innerHTML = `<tr><td colspan="5">Could not load dose records. Make sure Flask is running.</td></tr>`;
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", loadDoseRecords);
+    </script>
 
 </body>
 </html>

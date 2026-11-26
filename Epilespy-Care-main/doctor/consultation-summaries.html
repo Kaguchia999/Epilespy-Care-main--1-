@@ -3,330 +3,353 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consultation Notes | Epilepsy Care</title>
-
+    <title>Consultation Summaries | Epilepsy Care System</title>
+    <link rel="stylesheet" href="../css/style.css">
     <style>
-        /* GENERAL STYLING */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        .patient-snapshot {
+            display: none;
+            background-color: #f8f5fc;
+            border: 1px solid #d8c8ee;
+            border-left: 4px solid #6b3fa0;
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #3a324a;
         }
-
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: #f4f7fc;
-            color: #333;
-        }
-
-        /* HEADER */
-        header {
-            background-color: #2457a6;
-            color: white;
-            padding: 20px 7%;
+        .snapshot-row {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
+            gap: 10px;
+        }
+        .snapshot-metrics {
+            display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 16px;
         }
-
-        header h1 {
-            font-size: 24px;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin-left: 20px;
-        }
-
-        nav a:hover {
-            text-decoration: underline;
-        }
-
-        /* MAIN CONTAINER */
-        .container {
-            width: 90%;
-            max-width: 900px;
-            margin: 35px auto;
-        }
-
-        /* INTRODUCTION */
-        .welcome {
-            background-color: white;
-            padding: 25px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-
-        .welcome h2 {
-            color: #2457a6;
-            margin-bottom: 12px;
-        }
-
-        .welcome p {
-            color: #666;
-            line-height: 1.7;
-        }
-
-        /* FORM CARD */
-        .form-card {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-
-        .form-card h3 {
-            color: #2457a6;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 15px;
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #2457a6;
-        }
-
-        textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        /* BUTTON */
-        .btn {
-            background-color: #2457a6;
-            color: white;
-            padding: 13px 22px;
+        .btn-sm {
+            padding: 6px 12px;
             border: none;
             border-radius: 6px;
-            font-size: 15px;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
             cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
         }
-
-        .btn:hover {
-            background-color: #183f7d;
-        }
-
-        /* INFORMATION SECTION */
-        .information {
-            background-color: white;
-            padding: 25px;
-            border-radius: 10px;
-            margin-top: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-
-        .information h3 {
-            color: #2457a6;
-            margin-bottom: 12px;
-        }
-
-        .information p {
-            color: #666;
-            line-height: 1.7;
-        }
-
-        /* FOOTER */
-        footer {
-            background-color: #2457a6;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            margin-top: 40px;
-        }
-
-        /* RESPONSIVE DESIGN */
-        @media (max-width: 650px) {
-            header {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            nav a {
-                display: inline-block;
-                margin: 8px;
-            }
-
-            .container {
-                width: 92%;
-            }
-
-            .form-card {
-                padding: 20px;
-            }
+        .btn-view {
+            background-color: #f2ecf9;
+            color: #522d80;
+            border: 1px solid #d8c8ee;
         }
     </style>
 </head>
 
-<body>
+<body class="sub-page">
 
-    <!-- HEADER -->
     <header>
-        <h1>Epilepsy Care System</h1>
-
+        <h2>Epilepsy Care Doctor</h2>
         <nav>
             <a href="../index.html">Home</a>
             <a href="doctor.html">Dashboard</a>
-            <a href="shared-summaries.html">Patient Summaries</a>
+            <a href="shared-summaries.html">Shared Summaries</a>
+            <a href="consultation-summaries.html">Consultation Notes</a>
+            <a href="login.html" id="logoutBtn">Logout</a>
         </nav>
     </header>
 
-    <!-- MAIN CONTENT -->
     <main class="container">
 
-        <!-- INTRODUCTION -->
-        <section class="welcome">
-
-            <h2>Consultation Notes</h2>
-
-            <p>
-                Record observations and recommendations following
-                a patient's consultation. These notes can help
-                document the doctor's review of the patient's
-                epilepsy management information.
-            </p>
-
+        <section class="page-heading">
+            <h1>Consultation Summaries</h1>
+            <p>Document clinical assessments, medication adjustments, and follow-up schedules after reviewing patient records.</p>
         </section>
 
-        <!-- CONSULTATION FORM -->
-        <section class="form-card">
+        <section class="card">
+            <h2>New Consultation Summary</h2>
 
-            <h3>Record Consultation Details</h3>
+            <!-- Live clinical snapshot for the selected patient -->
+            <div id="patientSnapshot" class="patient-snapshot">
+                <div class="snapshot-row">
+                    <div class="snapshot-metrics" id="snapshotMetrics"></div>
+                    <a href="shared-summaries.html" id="snapshotFullLink" class="btn-sm btn-view">Open Full Summary</a>
+                </div>
+            </div>
 
-            <form>
+            <form id="consultationForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="consultPatient">Patient</label>
+                        <select id="consultPatient" required>
+                            <option value="">Loading patients...</option>
+                        </select>
+                    </div>
 
-                <div class="form-group">
-                    <label for="patient-id">Patient ID</label>
+                    <div class="form-group">
+                        <label for="consultDate">Consultation Date</label>
+                        <input type="date" id="consultDate" required>
+                    </div>
+                </div>
 
-                    <input
-                        type="text"
-                        id="patient-id"
-                        placeholder="Enter patient ID"
-                        required
-                    >
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="diagnosis">Clinical Assessment / Findings</label>
+                        <input type="text" id="diagnosis" placeholder="e.g. Seizure frequency improved on current dose" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="followUpDate">Next Follow-Up Date (Optional)</label>
+                        <input type="date" id="followUpDate">
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="patient-name">Patient Name</label>
-
-                    <input
-                        type="text"
-                        id="patient-name"
-                        placeholder="Enter patient name"
-                        required
-                    >
+                    <label for="treatmentPlan">Treatment &amp; Medication Plan</label>
+                    <textarea id="treatmentPlan" placeholder="Specify dosage adjustments, new prescriptions, or lifestyle advice"></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label for="consultation-date">
-                        Consultation Date
-                    </label>
-
-                    <input
-                        type="date"
-                        id="consultation-date"
-                        required
-                    >
+                    <label for="consultNotes">Additional Clinical Notes</label>
+                    <textarea id="consultNotes" placeholder="Enter any extra notes for follow-up reference"></textarea>
                 </div>
 
-                <div class="form-group">
-                    <label for="consultation-type">
-                        Consultation Type
-                    </label>
-
-                    <select id="consultation-type" required>
-                        <option value="">Select consultation type</option>
-                        <option>Initial Consultation</option>
-                        <option>Follow-up Consultation</option>
-                        <option>Medication Review</option>
-                        <option>General Health Review</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="observations">
-                        Doctor's Observations
-                    </label>
-
-                    <textarea
-                        id="observations"
-                        placeholder="Enter observations about the patient's condition"
-                        required
-                    ></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="recommendations">
-                        Recommendations
-                    </label>
-
-                    <textarea
-                        id="recommendations"
-                        placeholder="Enter recommendations for the patient"
-                        required
-                    ></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="follow-up">
-                        Follow-up Date
-                    </label>
-
-                    <input
-                        type="date"
-                        id="follow-up"
-                    >
-                </div>
-
-                <button type="button" class="btn">
-                    Save Consultation Note
-                </button>
-
+                <button type="submit" class="btn">Save Consultation Summary</button>
             </form>
-
         </section>
 
-        <!-- INFORMATION -->
-        <section class="information">
+        <section class="card">
+            <h2>Saved Consultation Records</h2>
 
-            <h3>Important Information</h3>
+            <input
+                type="search"
+                id="consultSearchInput"
+                class="search-box"
+                placeholder="Search by patient name, assessment, or doctor..."
+            >
 
-            <p>
-                Consultation notes should contain accurate,
-                relevant and confidential patient information.
-                Access to these records should be restricted
-                to authorised users.
-            </p>
-
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Patient</th>
+                            <th>Assessment</th>
+                            <th>Treatment Plan</th>
+                            <th>Follow-Up</th>
+                            <th>Doctor</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="consultationsTableBody">
+                        <tr>
+                            <td colspan="7" class="empty-message">Loading consultation records...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
 
     </main>
 
-    <!-- FOOTER -->
     <footer>
         <p>&copy; 2026 Epilepsy Care System. All Rights Reserved.</p>
     </footer>
 
+    <script>
+        const API_BASE = "http://127.0.0.1:5000";
+
+        const consultForm = document.getElementById("consultationForm");
+        const consultPatient = document.getElementById("consultPatient");
+        const consultDate = document.getElementById("consultDate");
+        const consultSearchInput = document.getElementById("consultSearchInput");
+        const consultationsTableBody = document.getElementById("consultationsTableBody");
+        const patientSnapshot = document.getElementById("patientSnapshot");
+        const snapshotMetrics = document.getElementById("snapshotMetrics");
+        const snapshotFullLink = document.getElementById("snapshotFullLink");
+
+        let allConsultations = [];
+
+        consultDate.value = new Date().toISOString().split("T")[0];
+
+        document.getElementById("logoutBtn").addEventListener("click", function() {
+            localStorage.removeItem("doctor_id");
+            localStorage.removeItem("full_name");
+            localStorage.removeItem("role");
+        });
+
+        function esc(value) {
+            return String(value ?? "-")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        async function loadPatientSnapshot(patientId) {
+            if (!patientId) {
+                patientSnapshot.style.display = "none";
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/doctor/patient-summary/${patientId}`);
+                if (!response.ok) return;
+                const data = await response.json();
+
+                const adherence = data.stats.adherence_rate !== null
+                    ? `${data.stats.adherence_rate}%`
+                    : "No logs";
+
+                snapshotMetrics.innerHTML = `
+                    <span><strong>Patient:</strong> ${esc(data.patient.full_name)}</span>
+                    <span><strong>Active Meds:</strong> ${data.stats.active_medications}</span>
+                    <span><strong>Seizures Logged:</strong> ${data.stats.total_seizures}</span>
+                    <span><strong>Adherence:</strong> ${adherence}</span>
+                `;
+                snapshotFullLink.href = `shared-summaries.html?patient_id=${patientId}`;
+                patientSnapshot.style.display = "block";
+            } catch (error) {
+                console.error("Load snapshot error:", error);
+            }
+        }
+
+        async function loadPatientsDropdown() {
+            try {
+                const response = await fetch(`${API_BASE}/api/doctor/overview`);
+                const data = await response.json();
+
+                consultPatient.innerHTML =
+                    '<option value="">-- Select a patient --</option>' +
+                    data.patients.map(p =>
+                        `<option value="${p.patient_id}">${esc(p.full_name)} (${esc(p.email)})</option>`
+                    ).join("");
+
+                const preselected = new URLSearchParams(window.location.search).get("patient_id");
+                if (preselected) {
+                    consultPatient.value = preselected;
+                    loadPatientSnapshot(preselected);
+                }
+            } catch (error) {
+                console.error("Load patients dropdown error:", error);
+                consultPatient.innerHTML = '<option value="">Could not load patients</option>';
+            }
+        }
+
+        function renderConsultations(list) {
+            if (list.length === 0) {
+                consultationsTableBody.innerHTML =
+                    '<tr><td colspan="7" class="empty-message">No consultation summaries found.</td></tr>';
+                return;
+            }
+
+            consultationsTableBody.innerHTML = list.map(rec => `
+                <tr>
+                    <td><strong>${esc(rec.consultation_date)}</strong></td>
+                    <td>${esc(rec.patient_name)}</td>
+                    <td>${esc(rec.diagnosis)}</td>
+                    <td>${esc(rec.treatment_plan || "-")}</td>
+                    <td>${esc(rec.follow_up_date || "-")}</td>
+                    <td>${esc(rec.doctor_name)}</td>
+                    <td>
+                        <button type="button" class="btn-sm btn-view" onclick="viewConsultation(${rec.consultation_id})">View</button>
+                    </td>
+                </tr>
+            `).join("");
+        }
+
+        function viewConsultation(consultationId) {
+            const rec = allConsultations.find(c => c.consultation_id === consultationId);
+            if (!rec) return;
+
+            alert(
+                `Consultation Summary\n\n` +
+                `Date: ${rec.consultation_date}\n` +
+                `Patient: ${rec.patient_name}\n` +
+                `Doctor: ${rec.doctor_name}\n` +
+                `Assessment: ${rec.diagnosis}\n` +
+                `Treatment Plan: ${rec.treatment_plan || "None specified"}\n` +
+                `Additional Notes: ${rec.notes || "None"}\n` +
+                `Next Follow-Up: ${rec.follow_up_date || "Not scheduled"}`
+            );
+        }
+
+        async function loadConsultations() {
+            try {
+                const response = await fetch(`${API_BASE}/api/doctor/consultations`);
+                if (!response.ok) throw new Error(`Server returned ${response.status}`);
+
+                allConsultations = await response.json();
+                renderConsultations(allConsultations);
+            } catch (error) {
+                console.error("Load consultations error:", error);
+                consultationsTableBody.innerHTML =
+                    '<tr><td colspan="7" class="empty-message">Could not load consultations from backend.</td></tr>';
+            }
+        }
+
+        consultPatient.addEventListener("change", function() {
+            loadPatientSnapshot(this.value);
+        });
+
+        consultSearchInput.addEventListener("input", function() {
+            const q = this.value.trim().toLowerCase();
+            const filtered = allConsultations.filter(rec =>
+                (rec.patient_name || "").toLowerCase().includes(q) ||
+                (rec.diagnosis || "").toLowerCase().includes(q) ||
+                (rec.doctor_name || "").toLowerCase().includes(q) ||
+                (rec.treatment_plan || "").toLowerCase().includes(q)
+            );
+            renderConsultations(filtered);
+        });
+
+        consultForm.addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const doctorId = localStorage.getItem("doctor_id");
+            if (!doctorId) {
+                alert("Please log in as an approved doctor first.");
+                window.location.href = "login.html";
+                return;
+            }
+
+            const payload = {
+                doctor_id: Number(doctorId),
+                patient_id: Number(consultPatient.value),
+                consultation_date: consultDate.value,
+                diagnosis: document.getElementById("diagnosis").value.trim(),
+                follow_up_date: document.getElementById("followUpDate").value,
+                treatment_plan: document.getElementById("treatmentPlan").value.trim(),
+                notes: document.getElementById("consultNotes").value.trim()
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/api/doctor/consultations`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message);
+                    consultForm.reset();
+                    consultDate.value = new Date().toISOString().split("T")[0];
+                    patientSnapshot.style.display = "none";
+                    loadConsultations();
+                } else {
+                    alert(result.error || result.message || "Could not save consultation summary.");
+                }
+            } catch (error) {
+                console.error("Save consultation error:", error);
+                alert("Could not connect to the backend.");
+            }
+        });
+
+        loadPatientsDropdown();
+        loadConsultations();
+    </script>
 </body>
 </html>

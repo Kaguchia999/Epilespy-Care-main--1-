@@ -3,139 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor Dashboard | Epilepsy Care</title>
-
- <link rel="stylesheet" href="../css/style.css">
+    <title>Consultation Summaries | Epilepsy Care System</title>
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 
-<body class="doctor-page">
+<body class="sub-page">
 
-    <!-- HEADER -->
     <header>
-        <h1>Epilepsy Care System</h1>
-
-        
-<nav>
-    <a href="../index.html">Home</a>
-    <a href="doctor.html">Dashboard</a>
-    <a href="shared-summaries.html">Shared Summaries</a>
-    <a href="consultation-note.html">Consultation Notes</a>
-    <a href="signup.html">Sign Up</a>
-    <a href="login.html">Login</a>
-</nav>
-        
+        <h2>Epilepsy Care Doctor</h2>
+        <nav>
+            <a href="../index.html">Home</a>
+            <a href="doctor.html">Dashboard</a>
+            <a href="shared-summaries.html">Shared Summaries</a>
+            <a href="consultation-summaries.html">Consultation Notes</a>
+        </nav>
     </header>
 
-    <!-- MAIN CONTENT -->
     <main class="container">
 
-        <!-- WELCOME SECTION -->
-        <section class="welcome">
-            <h2>Doctor Dashboard</h2>
-
-            <p>
-                Welcome to the Epilepsy Care System Doctor Dashboard.
-                This section provides access to patient health summaries
-                shared with the doctor and a space for consultation notes.
-            </p>
+        <section class="page-heading">
+            <h1>Consultation Summaries</h1>
+            <p>Document clinical assessments, medication adjustments, and follow-up schedules after reviewing patient records.</p>
         </section>
 
-        <!-- SUMMARY CARDS -->
-        <section class="summary-cards">
+        <section class="card">
+            <h2>New Consultation Summary</h2>
 
-            <div class="summary-card">
-                <h3>Shared Patient Summaries</h3>
-                <p>0</p>
-            </div>
+            <form id="consultationForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="consultPatient">Patient</label>
+                        <select id="consultPatient" required>
+                            <option value="">Loading patients...</option>
+                        </select>
+                    </div>
 
-            <div class="summary-card">
-                <h3>Pending Reviews</h3>
-                <p>0</p>
-            </div>
+                    <div class="form-group">
+                        <label for="consultDate">Consultation Date</label>
+                        <input type="date" id="consultDate" required>
+                    </div>
+                </div>
 
-            <div class="summary-card">
-                <h3>Consultation Notes</h3>
-                <p>0</p>
-            </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="diagnosis">Clinical Assessment / Findings</label>
+                        <input type="text" id="diagnosis" placeholder="e.g. Seizure frequency improved on current dose" required>
+                    </div>
 
-        </section>
-
-        <!-- SHARED PATIENT SUMMARIES -->
-        <section class="section">
-
-            <h2>Shared Patient Summaries</h2>
-
-            <p>
-                View health summaries that patients have shared
-                with the doctor for review.
-            </p>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Patient ID</th>
-                        <th>Patient Name</th>
-                        <th>Date Shared</th>
-                        <th>Summary Type</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <tr>
-                        <td colspan="5">
-                            No patient summaries available yet.
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-        </section>
-
-        <!-- CONSULTATION NOTES -->
-        <section class="section">
-
-            <h2>Consultation Notes</h2>
-
-            <p>
-                This section provides a space for recording
-                observations and recommendations following
-                a patient consultation.
-            </p>
-
-            <form>
-
-                <div class="form-group">
-                    <label for="patient">Patient ID or Name</label>
-                    <input type="text" id="patient"
-                           placeholder="Enter patient ID or name">
+                    <div class="form-group">
+                        <label for="followUpDate">Next Follow-Up Date (Optional)</label>
+                        <input type="date" id="followUpDate">
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="date">Consultation Date</label>
-                    <input type="date" id="date">
+                    <label for="treatmentPlan">Treatment &amp; Medication Plan</label>
+                    <textarea id="treatmentPlan" placeholder="Specify dosage adjustments, new prescriptions, or lifestyle advice"></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label for="notes">Consultation Notes</label>
-                    <textarea id="notes"
-                              placeholder="Enter consultation observations and recommendations"></textarea>
+                    <label for="consultNotes">Additional Clinical Notes</label>
+                    <textarea id="consultNotes" placeholder="Enter any extra notes for follow-up reference"></textarea>
                 </div>
 
-                <button type="button" class="btn">
-                    Save Consultation Note
-                </button>
-
+                <button type="submit" class="btn">Save Consultation Summary</button>
             </form>
+        </section>
 
+        <section class="card">
+            <h2>Saved Consultation Records</h2>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Patient</th>
+                            <th>Assessment</th>
+                            <th>Treatment Plan</th>
+                            <th>Follow-Up</th>
+                            <th>Doctor</th>
+                        </tr>
+                    </thead>
+                    <tbody id="consultationsTableBody">
+                        <tr>
+                            <td colspan="6" class="empty-message">Loading consultation records...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
 
     </main>
 
-    <!-- FOOTER -->
     <footer>
         <p>&copy; 2026 Epilepsy Care System. All Rights Reserved.</p>
     </footer>
 
+    <script>
+        const API_BASE = "http://127.0.0.1:5000";
+
+        const consultForm = document.getElementById("consultationForm");
+        const consultPatient = document.getElementById("consultPatient");
+        const consultDate = document.getElementById("consultDate");
+        const consultationsTableBody = document.getElementById("consultationsTableBody");
+
+        consultDate.value = new Date().toISOString().split("T")[0];
+
+        async function loadPatientsDropdown() {
+            try {
+                const response = await fetch(`${API_BASE}/api/doctor/overview`);
+                const data = await response.json();
+
+                consultPatient.innerHTML =
+                    '<option value="">-- Select a patient --</option>' +
+                    data.patients.map(p =>
+                        `<option value="${p.patient_id}">${p.full_name} (${p.email})</option>`
+                    ).join("");
+
+                const preselected = new URLSearchParams(window.location.search).get("patient_id");
+                if (preselected) {
+                    consultPatient.value = preselected;
+                }
+            } catch (error) {
+                console.error("Load patients dropdown error:", error);
+            }
+        }
+
+        async function loadConsultations() {
+            try {
+                const response = await fetch(`${API_BASE}/api/doctor/consultations`);
+                if (!response.ok) throw new Error(`Server returned ${response.status}`);
+
+                const records = await response.json();
+
+                if (records.length === 0) {
+                    consultationsTableBody.innerHTML =
+                        '<tr><td colspan="6" class="empty-message">No consultation summaries saved yet.</td></tr>';
+                    return;
+                }
+
+                consultationsTableBody.innerHTML = records.map(rec => `
+                    <tr>
+                        <td><strong>${rec.consultation_date}</strong></td>
+                        <td>${rec.patient_name}</td>
+                        <td>${rec.diagnosis}</td>
+                        <td>${rec.treatment_plan || "-"}</td>
+                        <td>${rec.follow_up_date || "-"}</td>
+                        <td>${rec.doctor_name}</td>
+                    </tr>
+                `).join("");
+            } catch (error) {
+                console.error("Load consultations error:", error);
+                consultationsTableBody.innerHTML =
+                    '<tr><td colspan="6" class="empty-message">Could not load consultations from backend.</td></tr>';
+            }
+        }
+
+        consultForm.addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const doctorId = localStorage.getItem("doctor_id");
+            if (!doctorId) {
+                alert("Please log in as an approved doctor first.");
+                window.location.href = "login.html";
+                return;
+            }
+
+            const payload = {
+                doctor_id: Number(doctorId),
+                patient_id: Number(consultPatient.value),
+                consultation_date: consultDate.value,
+                diagnosis: document.getElementById("diagnosis").value.trim(),
+                follow_up_date: document.getElementById("followUpDate").value,
+                treatment_plan: document.getElementById("treatmentPlan").value.trim(),
+                notes: document.getElementById("consultNotes").value.trim()
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/api/doctor/consultations`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message);
+                    consultForm.reset();
+                    consultDate.value = new Date().toISOString().split("T")[0];
+                    loadConsultations();
+                } else {
+                    alert(result.error || result.message);
+                }
+            } catch (error) {
+                console.error("Save consultation error:", error);
+                alert("Could not connect to the backend.");
+            }
+        });
+
+        loadPatientsDropdown();
+        loadConsultations();
+    </script>
 </body>
 </html>

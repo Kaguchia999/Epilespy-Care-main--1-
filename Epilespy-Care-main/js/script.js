@@ -1,368 +1,446 @@
-
-// ADMINISTRATOR LOGIN FORM VALIDATION
 const API_BASE = "http://127.0.0.1:5000";
-async function loginAdmin(email, password) {
-    try {
-        // 1. Send email and password to Flask as JSON
-        const response = await fetch(`${API_BASE}/api`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: email, password: password })
-        });
 
-        // 2. Read the JSON reply Flask sent back
-        const result = await response.json();
-
-        // 3. Redirect on success (200), or show Flask's error (401 / 403)
-        if (response.ok) {
-            localStorage.setItem("admin_id", result.admin_id);
-            localStorage.setItem("admin_name", result.full_name);
-            alert("Welcome " + result.full_name);
-            window.location.href = "admin.html";
-        } else {
-            alert(result.message);
-        }
-    } catch (error) {
-        console.error("Login error:", error);
-        alert("Could not connect to the backend. Check that python app.py is running.");
-    }
-}
-
-const adminLoginForm = document.getElementById("adminLoginForm");
-
-if (adminLoginForm) {
-    adminLoginForm.addEventListener("submit", function(event) {
-        event.preventDefault(); // Stops the browser from reloading the page
-
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
-
-        if (email === "" || password === "") {
-            alert("Please fill in all the required fields.");
-            return;
-        }
-
-        loginAdmin(email, password);
-    });
-}
-
-// ======================================
-// USER REGISTRATION (PATIENT / CAREGIVER / DOCTOR)
-// ======================================
-const registerForm = document.getElementById("registerForm");
-
-if (registerForm) {
+document.addEventListener("DOMContentLoaded", () => {
+    // ======================================
+    // 1. REGISTRATION FORM (register.html)
+    // ======================================
     const roleSelect = document.getElementById("role");
     const phoneGroup = document.getElementById("phoneGroup");
     const doctorFields = document.getElementById("doctorFields");
-    const registrationNoInput = document.getElementById("registrationNo");
+    const registerForm = document.getElementById("registerForm");
 
-    // Show/hide extra fields depending on the selected role
-    roleSelect.addEventListener("change", function() {
+    const params = new URLSearchParams(window.location.search);
+    const inviteToken = params.get("invite") || "";
+
+    function updateRoleFields() {
+        if (!roleSelect) return;
         const isDoctor = roleSelect.value === "doctor";
-        doctorFields.style.display = isDoctor ? "block" : "none";
-        phoneGroup.style.display = isDoctor ? "none" : "block";
-        registrationNoInput.required = isDoctor;
-    });
-
-    registerForm.addEventListener("submit", async function(event) {
-        event.preventDefault();
-
-        const role = roleSelect.value;
-        const payload = {
-            role: role,
-            full_name: document.getElementById("fullName").value.trim(),
-            email: document.getElementById("email").value.trim(),
-            password: document.getElementById("password").value,
-            phone: document.getElementById("phone").value.trim(),
-            registration_no: registrationNoInput.value.trim(),
-            facility: document.getElementById("facility").value.trim()
-        };
-
-        try {
-            const response = await fetch(`${API_BASE}/api/register`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                alert(result.message);
-                window.location.href = `${role}/login.html`;
-            } else {
-                alert(result.message);
-            }
-        } catch (error) {
-            console.error("Registration error:", error);
-            alert("Could not connect to the backend. Check that python app.py is running.");
-        }
-    });
-}
-// ======================================
-// PATIENT MEDICATION MANAGEMENT
-// ======================================
-const medicationForm = document.getElementById("medicationForm");
-const medicationTableBody = document.getElementById("medicationTableBody");
-
-async function loadMedications() {
-    if (!medicationTableBody) return;
-
-    const patientId = localStorage.getItem("patient_id");
-    if (!patientId) {
-        medicationTableBody.innerHTML =
-            '<tr><td colspan="5" class="empty-message">Please log in as a patient first.</td></tr>';
-        return;
+        if (doctorFields) doctorFields.style.display = isDoctor ? "block" : "none";
+        if (phoneGroup) phoneGroup.style.display = isDoctor ? "none" : "block";
     }
 
-    try {
-        const response = await fetch(`${API_BASE}/api/medications/${patientId}`);
-        const meds = await response.json();
+    if (roleSelect) {
+        roleSelect.addEventListener("change", updateRoleFields);
 
-        if (meds.length === 0) {
-            medicationTableBody.innerHTML =
-                '<tr><td colspan="5" class="empty-message">No medication has been added yet.</td></tr>';
-            return;
-        }
+        // If a caregiver opened an invitation link, pre-select Caregiver and pre-fill their email
+        if (inviteToken) {
+            roleSelect.value = "caregiver";
+            roleSelect.disabled = true;
+            updateRoleFields();
 
-        medicationTableBody.innerHTML = meds.map(med => `
-            <tr>
-                <td><strong>${med.medication_name}</strong></td>
-                <td>${med.strength || "-"}</td>
-                <td>${med.frequency || "-"}</td>
-                <td>${med.reminder_time || "-"}</td>
-                <td><span class="badge badge-success">Active</span></td>
-            </tr>
-        `).join("");
-    } catch (error) {
-        console.error("Load medications error:", error);
-        medicationTableBody.innerHTML =
-            '<tr><td colspan="5" class="empty-message">Could not load medications from backend.</td></tr>';
-    }
-}
-
-if (medicationForm) {
-    loadMedications();
-
-    medicationForm.addEventListener("submit", async function(event) {
-        event.preventDefault();
-
-        const patientId = localStorage.getItem("patient_id");
-        if (!patientId) {
-            alert("Please log in as a patient first.");
-            window.location.href = "login.html";
-            return;
-        }
-
-        const payload = {
-            patient_id: Number(patientId),
-            medication_name: document.getElementById("medication-name").value.trim(),
-            dosage: document.getElementById("dosage").value.trim(),
-            frequency: document.getElementById("frequency").value,
-            reminder_time: document.getElementById("time").value,
-            start_date: document.getElementById("start-date").value,
-            notes: document.getElementById("notes").value.trim()
-        };
-
-        try {
-            const response = await fetch(`${API_BASE}/api/medications`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                alert(result.message);
-                medicationForm.reset();
-                loadMedications(); // Refresh table immediately from MySQL
-            } else {
-                alert(result.message);
-            }
-        } catch (error) {
-            console.error("Add medication error:", error);
-            alert("Could not connect to the backend.");
-        }
-    });
-}
-
-// ======================================
-// PATIENT HEALTH RECORDS (SEIZURES & SYMPTOMS)
-// ======================================
-const healthRecordForm = document.getElementById("healthRecordForm");
-const healthRecordsTableBody = document.getElementById("healthRecordsTableBody");
-
-async function loadHealthRecords() {
-    if (!healthRecordsTableBody) return;
-
-    const patientId = localStorage.getItem("patient_id");
-    if (!patientId) {
-        healthRecordsTableBody.innerHTML =
-            '<tr><td colspan="4" class="empty-message">Please log in as a patient first.</td></tr>';
-        return;
-    }
-
-    try {
-        const response = await fetch(`${API_BASE}/api/health-records/${patientId}`);
-        const records = await response.json();
-
-        if (records.length === 0) {
-            healthRecordsTableBody.innerHTML =
-                '<tr><td colspan="4" class="empty-message">No health records have been added yet.</td></tr>';
-            return;
-        }
-
-        healthRecordsTableBody.innerHTML = records.map(rec => `
-            <tr>
-                <td>${rec.record_date}</td>
-                <td>
-                    <span class="badge ${rec.had_seizure ? "badge-danger" : "badge-success"}">
-                        ${rec.seizure_occurrence}
-                    </span>
-                </td>
-                <td>${rec.symptoms}</td>
-                <td>${rec.observations}</td>
-            </tr>
-        `).join("");
-    } catch (error) {
-        console.error("Load health records error:", error);
-        healthRecordsTableBody.innerHTML =
-            '<tr><td colspan="4" class="empty-message">Could not load health records from backend.</td></tr>';
-    }
-}
-
-if (healthRecordForm) {
-    loadHealthRecords();
-
-    healthRecordForm.addEventListener("submit", async function(event) {
-        event.preventDefault();
-
-        const patientId = localStorage.getItem("patient_id");
-        if (!patientId) {
-            alert("Please log in as a patient first.");
-            window.location.href = "login.html";
-            return;
-        }
-
-        const payload = {
-            patient_id: Number(patientId),
-            record_date: document.getElementById("record-date").value,
-            seizure: document.getElementById("seizure").value,
-            seizure_type: document.getElementById("seizure-type").value.trim(),
-            duration_secs: document.getElementById("duration").value,
-            symptoms: document.getElementById("symptoms").value.trim(),
-            observations: document.getElementById("observations").value.trim()
-        };
-
-        try {
-            const response = await fetch(`${API_BASE}/api/health-records`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                alert(result.message);
-                healthRecordForm.reset();
-                loadHealthRecords(); // Refresh table immediately from MySQL
-            } else {
-                alert(result.message);
-            }
-        } catch (error) {
-            console.error("Add health record error:", error);
-            alert("Could not connect to the backend.");
-        }
-    });
-}
-// ======================================
-// ADMIN: DOCTOR APPLICATIONS APPROVAL
-// ======================================
-const doctorApplicationsBody = document.getElementById("doctorApplicationsBody");
-
-function getStatusBadgeClass(status) {
-    if (status === "approved") return "badge-success";
-    if (status === "rejected") return "badge-danger";
-    return "badge-warning";
-}
-
-async function loadDoctorApplications() {
-    if (!doctorApplicationsBody) return;
-
-    const adminId = localStorage.getItem("admin_id");
-    if (!adminId) {
-        doctorApplicationsBody.innerHTML =
-            '<tr><td colspan="6" class="empty-message">Please log in as an administrator first.</td></tr>';
-        return;
-    }
-
-    try {
-        const response = await fetch(`${API_BASE}/api/admin/doctors`);
-        const doctors = await response.json();
-
-        if (doctors.length === 0) {
-            doctorApplicationsBody.innerHTML =
-                '<tr><td colspan="6" class="empty-message">No doctor applications found.</td></tr>';
-            return;
-        }
-
-        doctorApplicationsBody.innerHTML = doctors.map(doc => {
-            const status = (doc.approval_status || "pending").toLowerCase();
-            const badgeClass = getStatusBadgeClass(status);
-            const displayStatus = status.charAt(0).toUpperCase() + status.slice(1);
-
-            return `
-                <tr>
-                    <td><strong>${doc.full_name}</strong></td>
-                    <td>${doc.email}</td>
-                    <td>${doc.registration_no || "-"}</td>
-                    <td>${doc.facility || "-"}</td>
-                    <td><span class="badge ${badgeClass}">${displayStatus}</span></td>
-                    <td>
-                        <div class="action-buttons">
-                            ${status !== "approved"
-                                ? `<button class="btn-sm btn-approve" onclick="updateDoctorStatus(${doc.doctor_id}, 'approved')">Approve</button>`
-                                : ""}
-                            ${status !== "rejected"
-                                ? `<button class="btn-sm btn-reject" onclick="updateDoctorStatus(${doc.doctor_id}, 'rejected')">Reject</button>`
-                                : ""}
-                        </div>
-                    </td>
-                </tr>
-            `;
-        }).join("");
-    } catch (error) {
-        console.error("Load doctor applications error:", error);
-        doctorApplicationsBody.innerHTML =
-            '<tr><td colspan="6" class="empty-message">Could not load doctor applications from backend.</td></tr>';
-    }
-}
-
-async function updateDoctorStatus(doctorId, newStatus) {
-    try {
-        const response = await fetch(`${API_BASE}/api/admin/doctors/${doctorId}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ approval_status: newStatus })
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            alert(result.message);
-            loadDoctorApplications(); // Refresh table immediately from MySQL
+            fetch(`${API_BASE}/api/caregiver/invite/${inviteToken}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.caregiver_email) {
+                        const emailInput = document.getElementById("email");
+                        if (emailInput) emailInput.value = data.caregiver_email;
+                    }
+                })
+                .catch((err) => console.error("Invite check error:", err));
         } else {
-            alert(result.message);
+            updateRoleFields();
         }
-    } catch (error) {
-        console.error("Update doctor status error:", error);
-        alert("Could not connect to the backend.");
     }
-}
 
-if (doctorApplicationsBody) {
-    loadDoctorApplications();
-}
+    if (registerForm) {
+        registerForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const role = document.getElementById("role").value;
+            const payload = {
+                role,
+                fullName: document.getElementById("fullName").value.trim(),
+                email: document.getElementById("email").value.trim(),
+                password: document.getElementById("password").value,
+                phone: document.getElementById("phone").value.trim(),
+                registrationNo: document.getElementById("registrationNo").value.trim(),
+                facility: document.getElementById("facility").value.trim(),
+                inviteToken
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/api/register`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    alert(data.error || data.message || "Registration failed.");
+                    return;
+                }
+
+                alert("Account created! Redirecting to login...");
+                window.location.href = `${role}/login.html`;
+            } catch (err) {
+                console.error("Register fetch error:", err);
+                alert("Could not reach the server. Make sure Flask is running.");
+            }
+        });
+    }
+
+    // ======================================
+    // 2. LOGIN FORMS (patient, doctor, caregiver, admin)
+    // ======================================
+    function setupLoginForm(formId, role, redirectPage) {
+        const form = document.getElementById(formId);
+        if (!form) return;
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/login/${role}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    alert(data.error || data.message || "Invalid email or password.");
+                    return;
+                }
+
+                // Save logged-in user details so the dashboard knows who is logged in
+                localStorage.setItem("currentUser", JSON.stringify(data));
+                localStorage.setItem("role", role);
+                localStorage.setItem("full_name", data.full_name || "");
+                if (data.patient_id) localStorage.setItem("patient_id", data.patient_id);
+                if (data.doctor_id) localStorage.setItem("doctor_id", data.doctor_id);
+                if (data.caregiver_id) localStorage.setItem("caregiver_id", data.caregiver_id);
+                if (data.admin_id) localStorage.setItem("admin_id", data.admin_id);
+                if (data.linked_patient_id) localStorage.setItem("linked_patient_id", data.linked_patient_id);
+
+                window.location.href = redirectPage;
+            } catch (err) {
+                console.error(`${role} login error:`, err);
+                alert("Could not reach the server. Make sure Flask is running.");
+            }
+        });
+    }
+
+    setupLoginForm("patientLoginForm", "patient", "patient.html");
+    setupLoginForm("doctorLoginForm", "doctor", "doctor.html");
+    setupLoginForm("caregiverLoginForm", "caregiver", "caregiver.html");
+    setupLoginForm("adminLoginForm", "admin", "admin.html");
+
+    // ======================================
+    // 3. CAREGIVER DASHBOARD COUNTS (HELP REQUESTS & DOSE UPDATES)
+    // ======================================
+    const caregiverId = Number(localStorage.getItem("caregiver_id"));
+    const helpRequestsCountEl = document.getElementById("helpRequestsCount");
+    const doseUpdatesCountEl = document.getElementById("doseUpdatesCount");
+
+    if (caregiverId && helpRequestsCountEl) {
+        fetch(`${API_BASE}/api/help-requests/caregiver/${caregiverId}`)
+            .then((res) => res.json())
+            .then((data) => {
+                if (Array.isArray(data)) {
+                    helpRequestsCountEl.textContent = data.length;
+                }
+            })
+            .catch((err) => console.error("Help request count error:", err));
+    }
+
+    if (caregiverId && doseUpdatesCountEl) {
+        fetch(`${API_BASE}/api/dose-logs/caregiver/${caregiverId}`)
+            .then((res) => res.json())
+            .then((data) => {
+                if (Array.isArray(data)) {
+                    doseUpdatesCountEl.textContent = data.length;
+                }
+            })
+            .catch((err) => console.error("Dose updates count error:", err));
+    }
+
+    // ======================================
+    // 4. ADD MEDICATION FORM (patient medications page)
+    // ======================================
+    const medicationForm = document.getElementById("medicationForm");
+    if (medicationForm) {
+        const frequencySelect = document.getElementById("frequency");
+        const timeContainer = document.getElementById("timeInputsContainer");
+
+        if (frequencySelect && timeContainer) {
+            frequencySelect.addEventListener("change", () => {
+                let count = 1;
+                if (frequencySelect.value === "Twice a day") count = 2;
+                else if (frequencySelect.value === "Three times a day") count = 3;
+
+                const labels = ["Dose 1", "Dose 2", "Dose 3"];
+                timeContainer.innerHTML = "";
+
+                for (let i = 0; i < count; i++) {
+                    const wrapper = document.createElement("div");
+                    wrapper.innerHTML = `
+                        <small style="display:block; color:#555; margin-bottom:2px;">${count > 1 ? labels[i] : "Time"}</small>
+                        <input type="time" class="med-time-input" required>
+                    `;
+                    timeContainer.appendChild(wrapper);
+                }
+            });
+        }
+
+        medicationForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const patientId = Number(localStorage.getItem("patient_id"));
+            if (!patientId) {
+                alert("Please log in as a patient before adding a medication.");
+                return;
+            }
+
+            const reminderTimes = Array.from(document.querySelectorAll(".med-time-input"))
+                .map((input) => input.value.trim())
+                .filter(Boolean)
+                .join(", ");
+
+            const payload = {
+                patient_id: patientId,
+                medication_name: document.getElementById("medication-name")?.value.trim() || "",
+                dosage: document.getElementById("dosage")?.value.trim() || "",
+                frequency: document.getElementById("frequency")?.value.trim() || "",
+                reminder_time: reminderTimes,
+                start_date: document.getElementById("start-date")?.value.trim() || "",
+                notes: document.getElementById("notes")?.value.trim() || ""
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/api/medications`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                    alert(data.message || data.error || "Could not add medication.");
+                    return;
+                }
+
+                alert("Medication added successfully!");
+                medicationForm.reset();
+
+                if (timeContainer) {
+                    timeContainer.innerHTML = `<input type="time" class="med-time-input" required>`;
+                }
+
+                if (typeof loadPatientMedications === "function") {
+                    await loadPatientMedications();
+                } else {
+                    window.location.reload();
+                }
+            } catch (err) {
+                console.error("Add medication error:", err);
+                alert("Could not reach the server. Make sure Flask is running.");
+            }
+        });
+    }
+
+    // ======================================
+    // 5. MEDICATION REMINDER NOTIFICATIONS (patient pages)
+    // ======================================
+    const loggedInRole = localStorage.getItem("role");
+    const loggedInPatientId = Number(localStorage.getItem("patient_id"));
+
+    if (loggedInRole === "patient" && loggedInPatientId) {
+        if ("Notification" in window && Notification.permission === "default") {
+            Notification.requestPermission();
+        }
+
+        function getHandledReminders() {
+            return JSON.parse(localStorage.getItem("handledReminders") || "[]");
+        }
+
+        function markReminderHandled(key) {
+            const list = getHandledReminders();
+            if (!list.includes(key)) {
+                list.push(key);
+                localStorage.setItem("handledReminders", JSON.stringify(list));
+            }
+        }
+
+        function getOrCreateReminderBanner() {
+            let banner = document.getElementById("reminderBanner");
+            if (!banner) {
+                banner = document.createElement("div");
+                banner.id = "reminderBanner";
+                banner.style.cssText =
+                    "display: none; background-color: #f3effa; border-left: 5px solid #6b4c9a; color: #2e1f47; padding: 14px 20px; margin: 16px auto; max-width: 1100px; border-radius: 6px; justify-content: space-between; align-items: center; gap: 12px;";
+                banner.innerHTML = `
+                    <span id="reminderMessage"></span>
+                    <button type="button" id="reminderTakenBtn" class="btn">Mark Taken</button>
+                `;
+                const main = document.querySelector("main") || document.body;
+                main.prepend(banner);
+            }
+            return banner;
+        }
+
+        const browserNotified = new Set();
+
+        async function checkMedicationReminders() {
+            try {
+                const res = await fetch(`${API_BASE}/api/medications/${loggedInPatientId}`);
+                const meds = await res.json();
+                if (!res.ok || !Array.isArray(meds)) return;
+
+                const now = new Date();
+                const currentTime = now.toTimeString().slice(0, 5); // "HH:MM"
+                const today = now.toISOString().split("T")[0];
+                const handled = getHandledReminders();
+
+                let dueMed = null;
+                let dueTime = "";
+
+                for (const med of meds) {
+                    const times = (med.reminder_time || "")
+                        .split(",")
+                        .map((t) => t.trim().slice(0, 5))
+                        .filter(Boolean);
+
+                    for (const t of times) {
+                        const key = `${med.med_id}-${today}-${t}`;
+                        if (currentTime >= t && !handled.includes(key)) {
+                            dueMed = med;
+                            dueTime = t;
+                            break;
+                        }
+                    }
+                    if (dueMed) break;
+                }
+
+                const banner = getOrCreateReminderBanner();
+                if (!dueMed) {
+                    banner.style.display = "none";
+                    return;
+                }
+
+                const key = `${dueMed.med_id}-${today}-${dueTime}`;
+                const msg = document.getElementById("reminderMessage");
+                const btn = document.getElementById("reminderTakenBtn");
+
+                msg.innerHTML = `<strong>Medication Reminder (${dueTime}):</strong> Time to take ${dueMed.medication_name} (${dueMed.strength || dueMed.dosage || ""}).`;
+                banner.style.display = "flex";
+
+                // Trigger browser popup once per dose time per session
+                if ("Notification" in window && Notification.permission === "granted" && !browserNotified.has(key)) {
+                    new Notification("Medication Reminder", {
+                        body: `Time to take ${dueMed.medication_name} (${dueMed.strength || dueMed.dosage || ""}) — ${dueTime}.`
+                    });
+                    browserNotified.add(key);
+                }
+
+                btn.onclick = async () => {
+                    btn.disabled = true;
+                    btn.textContent = "Saving...";
+                    try {
+                        const logRes = await fetch(`${API_BASE}/api/dose-logs`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                schedule_id: dueMed.schedule_id || null,
+                                med_id: dueMed.med_id,
+                                dose_date: today,
+                                status: "taken"
+                            })
+                        });
+                        if (logRes.ok) {
+                            markReminderHandled(key);
+                            banner.style.display = "none";
+                            if (typeof loadPatientMedications === "function") {
+                                loadPatientMedications();
+                            }
+                            checkMedicationReminders();
+                        }
+                    } catch (err) {
+                        console.error("Reminder dose log error:", err);
+                    } finally {
+                        btn.disabled = false;
+                        btn.textContent = "Mark Taken";
+                    }
+                };
+            } catch (err) {
+                console.error("Reminder check error:", err);
+            }
+        }
+
+        checkMedicationReminders();
+        setInterval(checkMedicationReminders, 60000);
+    }
+
+    // ======================================
+    // 6. CAREGIVER MISSED-DOSE ALERTS (caregiver pages)
+    // ======================================
+    if (loggedInRole === "caregiver" && caregiverId) {
+        if ("Notification" in window && Notification.permission === "default") {
+            Notification.requestPermission();
+        }
+
+        function getOrCreateCaregiverAlertBanner() {
+            let banner = document.getElementById("caregiverAlertBanner");
+            if (!banner) {
+                banner = document.createElement("div");
+                banner.id = "caregiverAlertBanner";
+                banner.style.cssText =
+                    "display: none; background-color: #fdf2f2; border-left: 5px solid #c0392b; color: #5c1a1b; padding: 14px 20px; margin: 16px auto; max-width: 1100px; border-radius: 6px; justify-content: space-between; align-items: center; gap: 12px;";
+                banner.innerHTML = `
+                    <div id="caregiverAlertMessage"></div>
+                    <button type="button" id="dismissCaregiverAlert" class="btn" style="background-color: #c0392b;">Dismiss</button>
+                `;
+                const main = document.querySelector("main") || document.body;
+                main.prepend(banner);
+
+                document.getElementById("dismissCaregiverAlert").addEventListener("click", () => {
+                    banner.style.display = "none";
+                });
+            }
+            return banner;
+        }
+
+        let lastAlertSignature = "";
+
+        async function checkCaregiverMissedDoses() {
+            try {
+                const res = await fetch(`${API_BASE}/api/caregiver/${caregiverId}/missed-doses`);
+                const alerts = await res.json();
+                if (!res.ok || !Array.isArray(alerts)) return;
+
+                const banner = getOrCreateCaregiverAlertBanner();
+                if (alerts.length === 0) {
+                    banner.style.display = "none";
+                    return;
+                }
+
+                const signature = JSON.stringify(alerts);
+                const msg = document.getElementById("caregiverAlertMessage");
+                const itemsHtml = alerts
+                    .map((a) => `<li><strong>${a.patient_name}</strong> — ${a.medication_name} ${a.strength} (${a.time}) <em>[${a.reason}]</em></li>`)
+                    .join("");
+
+                msg.innerHTML = `
+                    <strong>Missed Dose Alert (${alerts.length}):</strong>
+                    <ul style="margin: 6px 0 0 18px; padding: 0;">${itemsHtml}</ul>
+                `;
+                banner.style.display = "flex";
+
+                if ("Notification" in window && Notification.permission === "granted" && signature !== lastAlertSignature) {
+                    new Notification("Caregiver Missed Dose Alert", {
+                        body: `${alerts[0].patient_name} has ${alerts.length} missed/overdue medication dose(s) today.`
+                    });
+                    lastAlertSignature = signature;
+                }
+            } catch (err) {
+                console.error("Caregiver missed-dose check error:", err);
+            }
+        }
+
+        checkCaregiverMissedDoses();
+        setInterval(checkCaregiverMissedDoses, 60000);
+    }
+});
